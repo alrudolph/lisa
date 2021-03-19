@@ -1,25 +1,21 @@
 import * as React from "react";
-import  styled from "styled-components";
+import styled from "styled-components";
 
-import Map from "../components/map";
+import MapView from "../components/mapView";
 
-const Row = styled.div`
+const Container = styled.div`
   display: flex;
-  flex-direction: row;
-`
+  justify-content: center;
+  width: 100%;
+`;
 
 const Index = () => {
+  console.log("hello");
+
   return (
-  <div>
-    <Row>
-      <Map />
-      <Map />
-    </Row>
-    <Row>
-      <Map />
-      <Map />
-    </Row>
-  </div>
+    <Container>
+      <MapView />
+    </Container>
   );
 };
 
