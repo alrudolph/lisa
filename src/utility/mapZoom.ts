@@ -21,11 +21,11 @@ export default class MapZoom {
     select(id: string) {
         this.currId = id;
 
-        const clicked = this.g.select(`[id='${id}']`);
+        const clicked = this.g.select(`[stateName='${id}']`);
 
         this.active.classed("active", false);
         this.active = clicked.classed("active", true);
-        
+
         let d;
         clicked.attr('x', (_d, i) => {
             d = _d
@@ -38,12 +38,12 @@ export default class MapZoom {
         const x = (x0 + x1) / 2;
         const y = (y0 + y1) / 2;
 
-        const scaleNew = 0.7 / Math.max(dx / this.width, dy / this.height);
+        const scaleNew = 0.8 / Math.max(dx / this.width, dy / this.height);
         const translateNew = [this.width / 2 - scaleNew * x, this.height / 2 - scaleNew * y]
 
         this.g
             .transition()
-            .duration(750)
+            .duration(650)
             .attr("transform", `translate(${translateNew}) scale(${scaleNew})`)
 
         return id
@@ -57,7 +57,7 @@ export default class MapZoom {
     */
     clicked(clicked, d) {
         const stateId = clicked.getAttribute("id")
-       // const states = d3.selectAll(`[id='${stateId}']`)
+        // const states = d3.selectAll(`[id='${stateId}']`)
 
         if (this.active.node() === clicked) {
             return this.reset();
@@ -78,7 +78,7 @@ export default class MapZoom {
 
         this.g
             .transition()
-            .duration(750)
+            .duration(650)
             .attr("transform", `translate(${translateNew}) scale(${scaleNew})`)
 
         return stateId
@@ -91,10 +91,10 @@ export default class MapZoom {
         this.currId = ""
         this.active.classed("active", false);
         this.active = d3.select(null);
-  
+
         this.g
             .transition()
-            .duration(750)
+            .duration(500)
             .attr("transform", `translate(0)`)
     }
 }

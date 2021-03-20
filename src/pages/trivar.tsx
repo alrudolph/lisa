@@ -1,7 +1,7 @@
 import * as React from "react";
 import styled from "styled-components";
 
-import Trivariate from "./trivar";
+import MapView from "../components/mapView";
 
 const Container = styled.div`
   display: flex;
@@ -9,14 +9,14 @@ const Container = styled.div`
   width: 100%;
 `;
 
-const Index = () => {
+const Trivariate = () => {
   console.log("hello");
 
   return (
     <Container>
-      <Trivariate />
+      <MapView />
     </Container>
   );
 };
 
-export default Index;
+export default Trivariate;
