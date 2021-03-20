@@ -1,0 +1,2 @@
+(self.webpackChunkmy_gatsby_site=self.webpackChunkmy_gatsby_site||[]).push([[19],{6328:function(e,t,n){"use strict";n.r(t),n.d(t,{default:function(){return r}});var u=n(7294);function r(){return u.createElement(u.Fragment,null)}}}]);
+//# sourceMappingURL=component---src-pages-scatter-tsx-c5d06c67147a22cd49c3.js.map
