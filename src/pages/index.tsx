@@ -1,21 +1,28 @@
-import * as React from "react";
+import React from "react";
 import styled from "styled-components";
 
-import Trivariate from "./trivar";
+import Sparse from "../utility/sparse"
 
-const Container = styled.div`
-  display: flex;
-  justify-content: center;
-  width: 100%;
-`;
+import Page from "../components/page"
+import Trivariate from "./trivar"
+
+import cue_mobility from "../data/cm.json"
+import cue_sheltered from "../data/cs.json"
+import safe_mobility from "../data/sm.json"
+import safe_sheltered from "../data/ss.json"
+
+const nweek = 52
+
+const format = data => {
+  return Object.keys(data).map((key, i) => {
+    return new Sparse(data[key], nweek, key)
+  })
+}
 
 const Index = () => {
-  console.log("hello");
 
   return (
-    <Container>
-      <Trivariate />
-    </Container>
+      <Trivariate data={[format(cue_mobility), format(cue_sheltered), format(safe_mobility), format(safe_sheltered)]}/>
   );
 };
 
