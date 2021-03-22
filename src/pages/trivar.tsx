@@ -83,14 +83,17 @@ const Trivariate = ({ data }: Props) => {
                 )[0]
               : false;
 
+            const [hcount, ccount] = county ? county.count() : [0, 0];
+            const [hrecent, crecent] = county ? county.recent() : [0, 0];
+
             return (
               <Card
                 key={i}
                 title={mapTitles[i]}
-                hcount={county ? county.count("hot") : 0}
-                ccount={county ? county.count("cold") : 0}
-                hrecent={county ? county.recent("hot") : 0}
-                crecent={county ? county.recent("cold") : 0}
+                hcount={hcount}
+                ccount={ccount}
+                hrecent={hrecent}
+                crecent={crecent}
               />
             );
           })}

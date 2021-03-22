@@ -12,7 +12,6 @@ export default class Sparse {
     base: number;
     arr: Vec
     n: number
-    private map: { [key: number]: string }
     fips: number
 
     constructor(arr: Input, nweek: number, fips: string | number) {
@@ -20,7 +19,6 @@ export default class Sparse {
         delete arr["base"];
         this.arr = arr;
         this.n = nweek
-        this.map = { 1: 'hot', 2: 'cold', 0: 'none'}
         this.fips = Number(fips)
     }
 
@@ -28,20 +26,22 @@ export default class Sparse {
         return (i in this.arr) ? this.arr[i] : this.base
     }
 
-    count(s: 'hot' | 'cold', lastWeek = this.n) {
+    count(lastWeek = this.n) {
         return [...Array(lastWeek).keys()].map(i => {
-            return Number(this.map[this.get(i)] === s)
+            const val = this.get(i)
+            return [Number(val === 1), Number(val === 2)]
         }).reduce((acc, curr) => {
-            return acc + curr
-        })
+            return [acc[0] + curr[0], acc[1] + curr[1]]
+        }, [0, 0])
     }
 
-    recent(s: 'hot' | 'cold', lastWeek = this.n) {
+    recent(lastWeek = this.n) {
         return [...Array(lastWeek).keys()].map(i => {
-            return Number(this.map[this.get(i)] === s)
+            const val = this.get(i)
+            return [Number(val === 1), Number(val === 2)]
         }).reduce((acc, curr, i) => {
-            return curr ? i : acc
-        }, 0)
+            return [curr[0] ? i : acc[0], curr[1] ? i : acc[1]]
+        }, [0, 0])
     }
 
 }

@@ -138,7 +138,9 @@ const Map = ({
       .attr("class", "bubble")
       .attr(
         "r",
-        (d) => (( 20 + Math.abs(d.count("hot") - d.count("cold"))) / d.n)
+        (d) => {
+          return (( 20 + Math.max(...d.count())) / d.n)
+        }
       )
       /* 
         HAVE TO LOAD COUNTY AND STATE NAME TO BUBBLES HERE:
@@ -161,14 +163,8 @@ const Map = ({
         return `translate(${map_path.centroid(county_path)})`;
       })
       .style("fill", (sparse) => {
-        const cold = sparse.recent("cold")
-        if (cold) {
-          // console.log("COLD", cold, coldScale(cold))
-          return coldScale(cold);
-        }
-        else {
-          return hotScale(sparse.recent("hot"))
-        }
+        const [hot, cold] = sparse.recent()
+        return hot > cold ? hotScale(hot) : coldScale(cold);
       })
       .on("mouseout", () => {
         countySelector([-1, ""]);
