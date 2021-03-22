@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-import MapView from "../components/mapView";
-import ScatterView from "../components/scatterView";
-import Card from "../components/cards";
+import MapView from "../components/trivar/mapView";
+import ScatterView from "../components/trivar/scatterView";
+import Card from "../components/trivar/cards";
 import Page from "../components/page";
 
 import Sparse from "../utility/sparse";
@@ -32,6 +32,8 @@ const Trivariate = ({ data }: Props) => {
   const height = 250;
   const mapsTranslate: [number, number] = [width / 2, height / 2];
   const mapsScale = 500;
+  const scatterTranslate: [number, number] = [width / 2, width / 2];
+  const scatterScale = 1;
 
   const mapTitles = [
     "Cuebiq mobility index, rolling avg (Cuebiq)",
@@ -93,7 +95,12 @@ const Trivariate = ({ data }: Props) => {
             );
           })}
         </Cards>
-        <ScatterView />
+        <ScatterView 
+          MapData={data}
+          mapTitles={mapTitles}
+          selectedCounty={selectedCounty}
+          selectedState={selectedState}
+          />
       </Container>
     </Page>
   );

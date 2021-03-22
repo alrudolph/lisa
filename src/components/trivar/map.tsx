@@ -4,9 +4,8 @@ import styled from "styled-components";
 import * as d3 from "d3";
 import * as topojson from "topojson";
 
-import MapZoom from "../utility/mapZoom";
-import Sparse from "../utility/sparse";
-import { randomPoisson } from "d3";
+import MapZoom from "../../utility/mapZoom";
+import Sparse from "../../utility/sparse";
 
 const Container = styled.div`
   display: flex;
@@ -203,7 +202,7 @@ const Map = ({
         }
       })
       .on("click", function (event, { fips }) {
-        stateSelector([getStateFips(fips), this.getAttribute("countyName")]);
+        stateSelector([getStateFips(fips), this.getAttribute("stateName")]);
       })
       .style("fill-opacity", ({ fips }) => {
         return (highlightedState[0] === -1) || (getStateFips(fips) === highlightedState[0]) ? 1 : 0.4

@@ -6,8 +6,8 @@ import counties from "us-atlas/counties-10m.json";
 import states from "us-atlas/states-10m.json";
 //import data from "../data/counties.json";
 
-import MapZoom from "../utility/mapZoom";
-import Sparse from "../utility/sparse";
+import MapZoom from "../../utility/mapZoom";
+import Sparse from "../../utility/sparse";
 import Map from "./map";
 
 const Container = styled.div`
