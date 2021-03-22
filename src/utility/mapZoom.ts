@@ -6,25 +6,26 @@ export default class MapZoom {
     g = null
     width = 0
     height = 0
-    currId = ""
+    currId = -1
 
-    constructor(path, g, width, height) {
+    constructor(path, g, width, height, id) {
         this.path = path
         this.g = g;
         this.width = width
         this.height = height
+        this.currId = id
     }
 
     /*
         Zoom in from id
     */
-    select(id: string) {
+    select(id: number) {
         this.currId = id;
 
-        const clicked = this.g.select(`[stateName='${id}']`);
+        const clicked = this.g.select(`[stateFips='${id}']`);
 
-        this.active.classed("active", false);
-        this.active = clicked.classed("active", true);
+        // this.active.classed("active", false);
+        // this.active = clicked.classed("active", true);
 
         let d;
         clicked.attr('x', (_d, i) => {
@@ -53,7 +54,7 @@ export default class MapZoom {
         On click event handler,
 
 
-        not used
+        not used, WON'T WORK ANYMORE
     */
     clicked(clicked, d) {
         const stateId = clicked.getAttribute("id")

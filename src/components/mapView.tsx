@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import styled from "styled-components";
 
 //import us from "us-atlas/nation-10m.json"
@@ -60,11 +60,15 @@ type Data = Array<Sparse>;
 type Props = {
   MapSettings: MapSettings;
   mapTitles: Array<string>;
-  selectedCounty: [string, string];
-  setSelectedCounty: ([s1, s2]: [string, string]) => void;
-  selectedState: string;
-  setSelectedState: (s: string) => void;
+  selectedCounty: [number, string];
+  setSelectedCounty: ([s1, s2]: [number, string]) => void;
+  selectedState: [number, string];
+  setSelectedState: ([s1, s2]: [number, string]) => void;
   MapData: [Data, Data, Data, Data];
+};
+
+const getStateFips = (fips: number): number => {
+  return Number(String(fips).slice(0, -3));
 };
 
 export default function MapView({
@@ -74,7 +78,7 @@ export default function MapView({
   setSelectedCounty,
   selectedState,
   setSelectedState,
-  MapData
+  MapData,
 }: Props) {
   const [mapZoom, setMapZoom] = useState(Array<MapZoom>(mapTitles.length));
 
@@ -83,17 +87,43 @@ export default function MapView({
     setMapZoom(mapZoom);
   };
 
-  const stateSelector = (id: string, reset: boolean = false) => {
+  const stateSelector = ([id, name]: [number, string], reset: boolean = false) => {
+    let zooming: boolean;
+
     mapZoom.forEach((m) => {
       if (!reset && id !== m.currId) {
         m.select(id);
+        zooming = true;
       } else {
         m.reset();
+        zooming = false;
       }
-      setSelectedState(m.currId);
     });
-    setSelectedCounty(["", ""]);
+
+    if (zooming) {
+      if (name === "") {
+        name = counties.objects.states.geometries.filter(val => {
+          return id === Number(val.id);
+        })[0].properties.name
+        console.log("NAME IS", name)
+      }
+      setSelectedState([id, name]);
+      return true;
+    }
+    else {
+      setSelectedState([-1, ""]);
+      return false;
+    }
   };
+
+  const countySelector = ([id, name]: [number, string]) => {
+    if (id === -1) {
+      setSelectedCounty([id, name])
+    }
+    else if (getStateFips(id) === selectedState[0]) {
+      setSelectedCounty([id, name])
+    }
+  }
 
   return (
     <Container>
@@ -105,11 +135,12 @@ export default function MapView({
               MapSettings={MapSettings}
               title={title}
               countiesMap={counties}
-              highlightedCounty={selectedCounty[0]}
+              highlightedCounty={selectedCounty}
+              highlightedState={selectedState}
               addState={(m: MapZoom) => addState(m, i)}
               stateSelector={stateSelector}
-              countySelector={setSelectedCounty}
-              data={MapData[i]}
+              countySelector={countySelector}
+              data={MapData ? MapData[i] : null}
             />
           );
         })}
@@ -117,12 +148,12 @@ export default function MapView({
       <Row>
         <Button
           onClick={() => {
-            stateSelector("", true);
+            stateSelector([-1, ""], true);
           }}
         >
           Reset
         </Button>
-        <Text>{selectedState}</Text>
+        <Text>{selectedState[1]}</Text>
         <Text>{selectedCounty[1] ? selectedCounty[1] + " County" : ""}</Text>
       </Row>
     </Container>

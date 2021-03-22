@@ -13,15 +13,15 @@ export default class Sparse {
     arr: Vec
     n: number
     private map: { [key: number]: string }
-    fips: string
+    fips: number
 
-    constructor(arr: Input, nweek: number, fips: string) {
+    constructor(arr: Input, nweek: number, fips: string | number) {
         this.base = arr.base;
         delete arr["base"];
         this.arr = arr;
         this.n = nweek
         this.map = { 1: 'hot', 2: 'cold', 0: 'none'}
-        this.fips = fips
+        this.fips = Number(fips)
     }
 
     get(i: number) {

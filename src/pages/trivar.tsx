@@ -6,7 +6,7 @@ import ScatterView from "../components/scatterView";
 import Card from "../components/cards";
 import Page from "../components/page";
 
-import Sparse from "../utility/sparse"
+import Sparse from "../utility/sparse";
 
 const Container = styled.div`
   width: 100%;
@@ -24,8 +24,8 @@ const Cards = styled.div`
 `;
 
 type Props = {
-  data: [Array<Sparse>, Array<Sparse>, Array<Sparse>, Array<Sparse>]
-}
+  data: [Array<Sparse>, Array<Sparse>, Array<Sparse>, Array<Sparse>];
+};
 
 const Trivariate = ({ data }: Props) => {
   const width = 380;
@@ -34,11 +34,11 @@ const Trivariate = ({ data }: Props) => {
   const mapsScale = 500;
 
   const mapTitles = [
-    'Cuebiq mobility index, rolling avg (Cuebiq)', 
-    '% sheltered in place, rolling avg (Cuebiq)', 
-    'Median distance traveled (Safegraph)', 
-    '% sheltered (Safegraph)'
-]
+    "Cuebiq mobility index, rolling avg (Cuebiq)",
+    "% sheltered in place, rolling avg (Cuebiq)",
+    "Median distance traveled (Safegraph)",
+    "% sheltered (Safegraph)",
+  ];
 
   const MapSettings = {
     width,
@@ -47,12 +47,19 @@ const Trivariate = ({ data }: Props) => {
     scale: mapsScale,
   };
 
-  const [selectedCounty, setSelectedCounty] = useState<[string, string]>([
-    "",
+  const [selectedCounty, setSelectedCounty] = useState<[number, string]>([
+    -1,
     "",
   ]);
 
-  const [selectedState, setSelectedState] = useState("");
+  const [selectedState, setSelectedState] = useState<[number, string]>([
+    -1,
+    "",
+  ]);
+
+  // console.log(selectedCounty, selectedState)
+
+  const cardOrder = [0, 2, 1, 3];
 
   return (
     <Page>
@@ -67,14 +74,17 @@ const Trivariate = ({ data }: Props) => {
           setSelectedState={setSelectedState}
         />
         <Cards>
-          {mapTitles.map((title, i) => {
-            const county = data[i].filter(d => Number(d.fips) === Number(selectedCounty[0]))[0]
-
+          {cardOrder.map((i) => {
+            const county = data
+              ? data[i].filter(
+                  (d) => Number(d.fips) === Number(selectedCounty[0])
+                )[0]
+              : false;
 
             return (
               <Card
                 key={i}
-                title={title}
+                title={mapTitles[i]}
                 hcount={county ? county.count("hot") : 0}
                 ccount={county ? county.count("cold") : 0}
                 hrecent={county ? county.recent("hot") : 0}

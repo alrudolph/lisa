@@ -1,6 +1,6 @@
 import React from "react"
 
-export default function ScatterPlot()) {
+export default function ScatterPlot() {
     return (
         <></>
     )
