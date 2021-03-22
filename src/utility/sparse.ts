@@ -25,7 +25,7 @@ export default class Sparse {
     }
 
     get(i: number) {
-        return this.arr[i] ? this.arr[i] : this.base
+        return (i in this.arr) ? this.arr[i] : this.base
     }
 
     count(s: 'hot' | 'cold', lastWeek = this.n) {
@@ -41,7 +41,7 @@ export default class Sparse {
             return Number(this.map[this.get(i)] === s)
         }).reduce((acc, curr, i) => {
             return curr ? i : acc
-        })
+        }, 0)
     }
 
 }

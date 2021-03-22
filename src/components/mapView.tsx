@@ -91,7 +91,7 @@ export default function MapView({
     let zooming: boolean;
 
     mapZoom.forEach((m) => {
-      if (!reset && id !== m.currId) {
+      if (!reset && id !== m.currId && id !== -1) {
         m.select(id);
         zooming = true;
       } else {
@@ -101,12 +101,6 @@ export default function MapView({
     });
 
     if (zooming) {
-      if (name === "") {
-        name = counties.objects.states.geometries.filter(val => {
-          return id === Number(val.id);
-        })[0].properties.name
-        console.log("NAME IS", name)
-      }
       setSelectedState([id, name]);
       return true;
     }
@@ -117,10 +111,7 @@ export default function MapView({
   };
 
   const countySelector = ([id, name]: [number, string]) => {
-    if (id === -1) {
-      setSelectedCounty([id, name])
-    }
-    else if (getStateFips(id) === selectedState[0]) {
+    if (id === -1 || getStateFips(id) === selectedState[0]) {
       setSelectedCounty([id, name])
     }
   }
