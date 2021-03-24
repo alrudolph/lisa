@@ -11,13 +11,14 @@ type Props = {
   selectedCounty: [number, string];
   selectedState: [number, string];
   MapData: [Data, Data, Data, Data];
+  time: [number, number];
 };
 
 const Container = styled.div`
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
 `;
 
 export default function ScatterView({
@@ -25,6 +26,7 @@ export default function ScatterView({
   mapTitles,
   selectedState,
   selectedCounty,
+  time,
 }: Props) {
   return (
     <Container>
@@ -36,6 +38,7 @@ export default function ScatterView({
             selectedCounty={selectedCounty}
             selectedState={selectedState}
             data={MapData ? MapData[i] : null}
+            time={time}
           />
         );
       })}

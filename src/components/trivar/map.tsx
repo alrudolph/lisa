@@ -64,6 +64,9 @@ interface Props {
   stateSelector: ([s, s1]: [number, string], b?: boolean) => boolean;
   countySelector: ([s, s1]: [number, string]) => void;
   data: Data;
+  time: [number, number];
+  colorScales: [any, any];
+  getRadius: (g: Sparse) => number;
 }
 
 const Map = ({
@@ -76,6 +79,9 @@ const Map = ({
   stateSelector,
   countySelector,
   data,
+  time,
+  colorScales: [hotScale, coldScale],
+  getRadius,
 }: Props) => {
   const { width, height, translate, scale } = MapSettings;
 
@@ -85,15 +91,13 @@ const Map = ({
   const map_path = d3.geoPath().projection(projection);
 
   useEffect(() => {
-    const svg = d3.select(d3Container.current);
-
-    const map_g = svg.attr("width", width).attr("height", height).append("g");
+    const map_g = d3
+      .select(d3Container.current)
+      .attr("width", width)
+      .attr("height", height)
+      .append("g");
 
     addState(new MapZoom(map_path, map_g, width, height, highlightedState[0]));
-
-    const coldScale = d3.scaleSequentialPow(d3.interpolateBlues).domain([0, 52])
-
-    const hotScale = d3.scaleSequentialPow(d3.interpolateReds).domain([0, 52])
 
     // States:
     map_g
@@ -109,7 +113,7 @@ const Map = ({
       .attr("stateFips", ({ id }) => Number(id));
 
     // Counties:
-    const counties = map_g
+    map_g
       .append("g")
       .selectAll("path")
       .data(
@@ -130,18 +134,13 @@ const Map = ({
         countySelector([-1, ""]);
       });
 
+    // County Circles:
     map_g
       .selectAll("circle")
       .data(data)
       .enter()
       .append("circle")
       .attr("class", "bubble")
-      .attr(
-        "r",
-        (d) => {
-          return (( 20 + Math.max(...d.count())) / d.n)
-        }
-      )
       /* 
         HAVE TO LOAD COUNTY AND STATE NAME TO BUBBLES HERE:
           MAYBE PUT THOSE AS SPARSE VECTOR INFO
@@ -157,26 +156,27 @@ const Map = ({
         })[0].properties.name;
       })
       .attr("transform", ({ fips }) => {
-        const county_path = counties.data().find(({ id }) => {
-          return Number(id) === fips;
-        });
+        const county_path = d3.select(`#c${fips}`).datum();
         return `translate(${map_path.centroid(county_path)})`;
-      })
-      .style("fill", (sparse) => {
-        const [hot, cold] = sparse.recent()
-        return hot > cold ? hotScale(hot) : coldScale(cold);
       })
       .on("mouseout", () => {
         countySelector([-1, ""]);
-      })
+      });
   }, []);
-  
 
   useEffect(() => {
-    d3.selectAll(".cboundary")
-      .on("click", function (event, { id }) {
-        stateSelector([getStateFips(id), this.getAttribute("stateName")]);
+    d3.selectAll(".bubble")
+      .attr("r", getRadius)
+      .style("fill", (sparse) => {
+        const [hot, cold] = sparse.recent(...time);
+        return hot > cold ? hotScale(hot) : coldScale(cold);
       });
+  }, [time]);
+
+  useEffect(() => {
+    d3.selectAll(".cboundary").on("click", function (event, { id }) {
+      stateSelector([getStateFips(id), this.getAttribute("stateName")]);
+    });
 
     d3.selectAll(".cboundary").on(
       "mouseover",
@@ -187,7 +187,7 @@ const Map = ({
       }
     );
 
-    d3.selectAll(".bubble")     
+    d3.selectAll(".bubble")
       .on("mouseover", function (_, { fips }) {
         if (!highlightedState) {
           return;
@@ -201,8 +201,11 @@ const Map = ({
         stateSelector([getStateFips(fips), this.getAttribute("stateName")]);
       })
       .style("fill-opacity", ({ fips }) => {
-        return (highlightedState[0] === -1) || (getStateFips(fips) === highlightedState[0]) ? 1 : 0.4
-      })
+        return highlightedState[0] === -1 ||
+          getStateFips(fips) === highlightedState[0]
+          ? 1
+          : 0.2;
+      });
   }, [highlightedState]);
 
   return (

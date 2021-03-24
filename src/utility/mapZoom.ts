@@ -47,7 +47,7 @@ export default class MapZoom {
             .duration(650)
             .attr("transform", `translate(${translateNew}) scale(${scaleNew})`)
 
-        return id
+        return scaleNew
     }
 
     /*

@@ -4,6 +4,7 @@ import styled from "styled-components";
 import MapView from "../components/trivar/mapView";
 import ScatterView from "../components/trivar/scatterView";
 import Card from "../components/trivar/cards";
+import Slider from "../components/trivar/slider";
 import Page from "../components/page";
 
 import Sparse from "../utility/sparse";
@@ -59,6 +60,8 @@ const Trivariate = ({ data }: Props) => {
     "",
   ]);
 
+  const [time, setTime] = useState<[number, number]>([0, 52])
+
   // console.log(selectedCounty, selectedState)
 
   const cardOrder = [0, 2, 1, 3];
@@ -74,7 +77,10 @@ const Trivariate = ({ data }: Props) => {
           setSelectedCounty={setSelectedCounty}
           selectedState={selectedState}
           setSelectedState={setSelectedState}
+          time={time}
+          setTime={setTime}
         />
+        {/*<Slider time={time} setTime={setTime}/>*/}
         <Cards>
           {cardOrder.map((i) => {
             const county = data
@@ -83,8 +89,8 @@ const Trivariate = ({ data }: Props) => {
                 )[0]
               : false;
 
-            const [hcount, ccount] = county ? county.count() : [0, 0];
-            const [hrecent, crecent] = county ? county.recent() : [0, 0];
+            const [hcount, ccount] = county ? county.count(...time) : [0, 0];
+            const [hrecent, crecent] = county ? county.recent(...time) : [0, 0];
 
             return (
               <Card
@@ -103,6 +109,7 @@ const Trivariate = ({ data }: Props) => {
           mapTitles={mapTitles}
           selectedCounty={selectedCounty}
           selectedState={selectedState}
+          time={time}
           />
       </Container>
     </Page>
