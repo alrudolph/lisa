@@ -126,20 +126,6 @@ export default function ScatterPlot({
     const coldScale = d3.interpolateBlues;
     const hotScale = d3.interpolateReds;
 
-    map_g
-      .selectAll("dot")
-      .data(dataToPlot)
-      .enter()
-      .append("circle")
-      .attr("class", "point")
-      .attr("cx", ({ x }) => xAxis(x))
-      .attr("cy", ({ y }) => yAxis(y))
-      .attr("r", 2)
-      .style("fill", ({ hot }) => {
-        const avg = average(hot);
-        return avg > 0.5 ? hotScale(avg) : coldScale(1 - avg); // make sure 1 - avg never is 0
-      });
-
     const line = d3
       .line()
       .x(({ x }) => xAxis(x))
@@ -164,8 +150,22 @@ export default function ScatterPlot({
       .attr("stroke", "none")
       .attr("fill", "none")
       .attr("stroke-width", 1.5)
-      .attr("stroke-opacity", 0.15)
+      .attr("stroke-opacity", 0.1)
       .attr("d", (d) => line(d.data));
+
+    map_g
+      .selectAll("dot")
+      .data(dataToPlot)
+      .enter()
+      .append("circle")
+      .attr("class", "point")
+      .attr("cx", ({ x }) => xAxis(x))
+      .attr("cy", ({ y }) => yAxis(y))
+      .attr("r", 2)
+      .style("fill", ({ hot }) => {
+        const avg = average(hot);
+        return avg > 0.5 ? hotScale(avg) : coldScale(1 - avg); // make sure 1 - avg never is 0
+      });
   }, [time]);
 
   useEffect(() => {
@@ -175,15 +175,13 @@ export default function ScatterPlot({
         return selectedState[0] === -1 ||
           fips.find((f) => getStateFips(f) === selectedState[0]) !== undefined
           ? 1
-          : 0.07;
+          : 0.1;
       });
 
     d3.select(d3Container.current)
       .selectAll(".seq")
       .style("stroke", ({ fips }) => {
-        return getStateFips(fips) === selectedState[0]
-          ? "black"
-          : "none";
+        return getStateFips(fips) === selectedState[0] ? "black" : "none";
       });
   }, [selectedState]);
 

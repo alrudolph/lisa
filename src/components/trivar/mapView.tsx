@@ -61,6 +61,7 @@ const Legend = styled.div`
   width: 390px;
   display: flex;
   justify-content: center;
+  align-items: center;
 `;
 
 type MapSettings = {
@@ -158,7 +159,6 @@ export default function MapView({
   const margin = [20, 20];
 
   useEffect(() => {
-
     const width = Math.min(maxWidth, 100 + zoomScale * 10) - 2 * margin[0];
     const height = Math.min(maxHeight, 40 + zoomScale * 2);
 
@@ -180,7 +180,6 @@ export default function MapView({
       .attr("transform", `translate(${margin[0]},0)`);
 
     const xAxis = d3.scaleLinear().domain([1, 5]).range([0, width]);
-
     const yAxis = d3.scaleLinear().domain([0, 1]).range([height, 0]);
 
     map_g
@@ -211,7 +210,6 @@ export default function MapView({
       .attr("class", "point")
       .attr("cx", ({ x }) => xAxis(x))
       .attr("cy", () => yAxis(0.5))
-
       .attr("r", ({ r }) => getRadius(r) * zoomScale)
       .style("fill", "black");
 
@@ -223,23 +221,89 @@ export default function MapView({
       .text("Count");
   }, [time, zoomScale]);
 
-
   const recentContainer = useRef(null);
 
   useEffect(() => {
-
     d3.select(recentContainer.current).selectAll("*").remove();
 
-    const width = Math.min(maxWidth, 100 + zoomScale * 10) - 2 * margin[0];
-    const height = Math.min(maxHeight, 40 + zoomScale * 2);
+    const leftMargin = 30;
 
     const map_g = d3
       .select(recentContainer.current)
-      .style("width", width + (7 / 2) * margin[0])
-      .style("height", height + 2 * margin[1])
+      .style("width", maxWidth)
+      .style("height", maxHeight)
+      // .style("background-color", "lightgray")
       .append("g")
-      .attr("transform", `translate(${margin[0]},0)`);
-  }, [time, zoomScale])
+      .attr("transform", `translate(${leftMargin + margin[0]},0)`);
+
+    const weekValues = [1, 5, 10, 15, 20, 25, 30, 40, 46, 52];
+
+    const pointData = [...Array(weekValues.length * 2).keys()].map((i) => {
+      return {
+        x: i % weekValues.length + 1,
+        w: weekValues[i % weekValues.length],
+        c: i < weekValues.length ? 1 : 2,
+      };
+    });
+
+    const xAxis = d3
+      .scaleLinear()
+      .domain([1, weekValues.length])
+      .range([0, maxWidth - 2 * margin[0] - leftMargin]);
+    const yAxis = d3
+      .scaleLinear()
+      .domain([0, 3])
+      .range([maxHeight - 2 * margin[1], 0]);
+
+    map_g
+      .append("g")
+      .attr("transform", `translate(0,${margin[1] + maxHeight * 5/12})`)
+      .call(
+        d3
+          .axisBottom(xAxis)
+          .ticks(5)
+          .tickFormat((i) => String(pointData[i - 1].w))
+      );
+
+    map_g
+      .append("g")
+      .attr("transform", `translate(${margin[0]},0)`)
+      .call(d3.axisLeft(yAxis))
+      .style("display", "none");
+
+    map_g
+      .selectAll("dot")
+      .remove()
+      .data(pointData)
+      .enter()
+      .append("circle")
+      .attr("class", "point")
+      .attr("cx", ({ x }) => xAxis(x))
+      .attr("cy", ({ c }) => yAxis(c))
+      .attr("r", () => 9)
+      .style("fill", ({ c, w }) => (c === 1 ? hotScale(w) : coldScale(w)));
+
+    map_g
+      .append("text")
+      .attr("text-anchor", "end")
+      .attr("x", maxWidth / 2)
+      .attr("y", maxHeight * 19/20)
+      .text("Recentcy");
+
+    map_g
+      .append("text")
+      .attr("text-anchor", "end")
+      .attr("x", -leftMargin / 2)
+      .attr("y", maxHeight / 2 - 5)
+      .text("Hot");
+
+    map_g
+      .append("text")
+      .attr("text-anchor", "end")
+      .attr("x", -leftMargin / 2)
+      .attr("y", maxHeight / 4)
+      .text("Cold");
+  }, [time, zoomScale]);
 
   // useEffect(() => {
   //   d3
@@ -281,9 +345,8 @@ export default function MapView({
       </LegendContainer>
       <Row>
         <Button
-          onClick={() => {
+          onClick={() => {  
             stateSelector([-1, ""], true);
-            //  setTime([0, 52])
           }}
         >
           Reset
