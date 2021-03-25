@@ -5,6 +5,7 @@ import Sparse from "../utility/sparse";
 
 import Page from "../components/page";
 import Trivariate from "./trivar";
+import Bivariate from "./bivar";
 
 import cue_mobility from "../data/cm.json";
 import cue_sheltered from "../data/cs.json";
@@ -19,6 +20,17 @@ const format = (data) => {
   });
 };
 
+{
+  /* <Trivariate
+      data={[
+        format(cue_mobility),
+        format(cue_sheltered),
+        format(safe_mobility),
+        format(safe_sheltered),
+      ]}
+    /> */
+}
+
 const Index = () => {
   return (
     <Trivariate
@@ -28,7 +40,7 @@ const Index = () => {
         format(safe_mobility),
         format(safe_sheltered),
       ]}
-    />
+    /> 
   );
 };
 

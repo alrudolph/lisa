@@ -10,6 +10,7 @@ import states from "us-atlas/states-10m.json";
 
 import MapZoom from "../../utility/mapZoom";
 import Sparse from "../../utility/sparse";
+import Card from "./cards";
 import Map from "./map";
 
 const Container = styled.div`
@@ -62,6 +63,14 @@ const Legend = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+`;
+
+const Cards = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  width: 70%;
 `;
 
 type MapSettings = {
@@ -179,7 +188,7 @@ export default function MapView({
       .append("g")
       .attr("transform", `translate(${margin[0]},0)`);
 
-    const xAxis = d3.scaleLinear().domain([1, 5]).range([0, width]);
+    const xAxis = d3.scaleLinear().domain([1, pointData[pointData.length - 1].x]).range([0, width]);
     const yAxis = d3.scaleLinear().domain([0, 1]).range([height, 0]);
 
     map_g
@@ -240,7 +249,7 @@ export default function MapView({
 
     const pointData = [...Array(weekValues.length * 2).keys()].map((i) => {
       return {
-        x: i % weekValues.length + 1,
+        x: (i % weekValues.length) + 1,
         w: weekValues[i % weekValues.length],
         c: i < weekValues.length ? 1 : 2,
       };
@@ -257,7 +266,7 @@ export default function MapView({
 
     map_g
       .append("g")
-      .attr("transform", `translate(0,${margin[1] + maxHeight * 5/12})`)
+      .attr("transform", `translate(0,${margin[1] + (maxHeight * 5) / 12})`)
       .call(
         d3
           .axisBottom(xAxis)
@@ -286,9 +295,9 @@ export default function MapView({
     map_g
       .append("text")
       .attr("text-anchor", "end")
-      .attr("x", maxWidth / 2)
-      .attr("y", maxHeight * 19/20)
-      .text("Recentcy");
+      .attr("x", maxWidth / 2 + leftMargin)
+      .attr("y", (maxHeight * 19) / 20)
+      .text("Week Number");
 
     map_g
       .append("text")
@@ -314,6 +323,7 @@ export default function MapView({
 
   return (
     <Container>
+      <Text>Selected State: {selectedState[1]}</Text>
       <MapContainer>
         {mapTitles.map((title, i) => {
           return (
@@ -335,6 +345,34 @@ export default function MapView({
           );
         })}
       </MapContainer>
+      <Text>{selectedCounty[1] ? `Selected County: ${selectedCounty[1]} County` : ""}</Text>
+      <Cards>
+        {selectedCounty[0] !== -1
+          ? [0, 1, 2, 3].map((i) => {
+              const county = MapData
+                ? MapData[i].filter(
+                    (d) => Number(d.fips) === Number(selectedCounty[0])
+                  )[0]
+                : false;
+
+              const [hcount, ccount] = county ? county.count(...time) : [0, 0];
+              const [hrecent, crecent] = county
+                ? county.recent(...time)
+                : [0, 0];
+
+              return (
+                <Card
+                  key={i}
+                  title={mapTitles[i]}
+                  hcount={hcount}
+                  ccount={ccount}
+                  hrecent={hrecent}
+                  crecent={crecent}
+                />
+              );
+            })
+          : null}
+      </Cards>
       <LegendContainer>
         <Legend>
           <svg ref={recentContainer} />
@@ -345,14 +383,12 @@ export default function MapView({
       </LegendContainer>
       <Row>
         <Button
-          onClick={() => {  
+          onClick={() => {
             stateSelector([-1, ""], true);
           }}
         >
           Reset
         </Button>
-        <Text>{selectedState[1]}</Text>
-        <Text>{selectedCounty[1] ? selectedCounty[1] + " County" : ""}</Text>
       </Row>
     </Container>
   );
