@@ -1,1 +1,0 @@
-{"version":3,"sources":["webpack://my-gatsby-site/./src/pages/scatter.tsx"],"names":["Scatter"],"mappings":"+KAEe,SAASA,IACpB,OAAQ","file":"component---src-pages-scatter-tsx-c5d06c67147a22cd49c3.js","sourcesContent":["import React from \"react\"\n\nexport default function Scatter() {\n    return (<></>)\n}"],"sourceRoot":""}
