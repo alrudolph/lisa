@@ -1,2 +1,0 @@
-(self.webpackChunkmy_gatsby_site=self.webpackChunkmy_gatsby_site||[]).push([[10],{2553:function(e,t,l){"use strict";l.r(t);var n=l(7294),a=l(7183);t.default=function(e){e.data;return n.createElement(a.Z,null,n.createElement("div",null,n.createElement("p",null,"Hello")))}}}]);
-//# sourceMappingURL=component---src-pages-bivar-tsx-ce99083b2c436bd7c836.js.map
