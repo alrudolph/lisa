@@ -23,8 +23,10 @@ export default function Header() {
   return (
     <Container>
       <Nav>
-        <LinkText to="/">Bivar</LinkText>
+        <LinkText to="/">Home</LinkText>
+        <LinkText to="/bivar">Bivar</LinkText>
         <LinkText to="/trivar">Trivariate</LinkText>
+        <LinkText to="/trivar1">Trivariate1</LinkText>
         <LinkText to="/scatter">Scatter</LinkText>
       </Nav>
     </Container>

@@ -2,6 +2,9 @@ import React from "react";
 import styled from "styled-components";
 import Header from "./header";
 
+import { LisaData } from "../contexts/lisaContext";
+import { DatesData } from "../contexts/datesContext";
+
 const Centered = styled.div`
   width: 60%;
 `;
@@ -19,7 +22,9 @@ export default function Page({ children }) {
     <Container>
       <Centered>
         <Header />
-        {children}
+        <LisaData>
+          <DatesData>{children}</DatesData>
+        </LisaData>
       </Centered>
     </Container>
   );

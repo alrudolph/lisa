@@ -140,6 +140,7 @@ export default function ScatterPlot({
           const [hot, cold] = d.count();
           return {
             data: hot > cold ? d.sequential(1) : d.sequential(2),
+            hot: hot > cold,
             fips: d.fips,
           };
         })
@@ -150,7 +151,7 @@ export default function ScatterPlot({
       .attr("stroke", "none")
       .attr("fill", "none")
       .attr("stroke-width", 1.5)
-      .attr("stroke-opacity", 0.1)
+      .attr("stroke-opacity", 0.15)
       .attr("d", (d) => line(d.data));
 
     map_g
@@ -180,8 +181,8 @@ export default function ScatterPlot({
 
     d3.select(d3Container.current)
       .selectAll(".seq")
-      .style("stroke", ({ fips }) => {
-        return getStateFips(fips) === selectedState[0] ? "black" : "none";
+      .style("stroke", ({ fips, hot }) => {
+        return getStateFips(fips) === selectedState[0] ? (hot ? "#FF0000" : "#0000FF") : "none";
       });
   }, [selectedState]);
 

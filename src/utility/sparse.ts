@@ -17,6 +17,9 @@ export default class Sparse {
     /* INSTEAD OF STORING N, STORE LAST AND FIRST WEEK */
 
     constructor(arr: Input, nweek: number, fips: string | number) {
+        
+        // if (arr.base != 0 && arr.base != 1 && arr.base != 2) {console.log(Object.keys(arr))}
+
         this.base = arr.base;
         delete arr["base"];
         this.arr = arr;
@@ -26,6 +29,24 @@ export default class Sparse {
 
     get(i: number) {
         return (i in this.arr) ? this.arr[i] : this.base
+    }
+
+    getLast(i: number) {
+        const curr = this.get(i);
+
+        if (curr === undefined) {
+            console.log(i, this.base)
+        }
+
+        const last = curr === 0 ? [...Array(i).keys()].reduce((acc, curr) => {
+            const last = this.get(curr)
+            return last !== 0 ? { last, weeks: i - curr } : acc
+        }, { last: -1, weeks: 0}) : { last: curr, weeks: 0 }
+
+        return {
+            curr,
+            ...last
+        }
     }
 
     count(firstWeek = 0, lastWeek = this.n) {
@@ -50,6 +71,17 @@ export default class Sparse {
         }, [0, 0])
     }
 
+    changes(firstWeek = 0, lastWeek = this.n) {
+        return [...Array(this.n).keys()].map(i => {
+            return { last: this.get(i + firstWeek), changes: 0 }
+        }).reduce((acc, curr) => {
+            if (acc.last !== curr.last) {
+                acc.changes += 1;
+            }
+            return { ...curr, changes: acc.changes }
+        }).changes;
+    }
+
     sequential(which: 1 | 2, firstWeek = 0, lastWeek = this.n) {
         this.n = lastWeek - firstWeek
 
@@ -64,7 +96,6 @@ export default class Sparse {
                 x: i + firstWeek + 1
             } : 0
         }).filter(val => val !== 0)
-        
     }
 
 }

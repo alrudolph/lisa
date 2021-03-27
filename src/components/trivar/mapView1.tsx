@@ -3,16 +3,13 @@ import styled from "styled-components";
 
 import * as d3 from "d3";
 
-//import us from "us-atlas/nation-10m.json"
 import counties from "us-atlas/counties-10m.json";
-import states from "us-atlas/states-10m.json";
-//import data from "../data/counties.json";
 
 import MapZoom from "../../utility/mapZoom";
 import Sparse from "../../utility/sparse";
 import Card from "./cards";
-import Map from "./map";
-import { LisaContext } from "../../contexts/lisaContext"
+import Map1 from "./map1";
+import { LisaContext } from "../../contexts/lisaContext";
 
 const Container = styled.div`
   display: flex;
@@ -97,7 +94,7 @@ const getStateFips = (fips: number): number => {
   return Number(String(fips).slice(0, -3));
 };
 
-export default function MapView({
+export default function MapView1({
   MapSettings,
   selectedCounty,
   setSelectedCounty,
@@ -150,9 +147,9 @@ export default function MapView({
   };
 
   const coldScale = d3
-    .scaleSequentialPow(d3.interpolateBlues)
-    .domain([...time]);
-  const hotScale = d3.scaleSequentialPow(d3.interpolateReds).domain([...time]);
+    .scaleSequential(d3.interpolateBlues)
+    .domain([-0.5, 1]);
+  const hotScale = d3.scaleSequential(d3.interpolateReds).domain([-0.5, 1]);
 
   const getRadius = (d: Sparse | number) => {
     const val = d instanceof Sparse ? d.count(...time) : [d];
@@ -326,7 +323,7 @@ export default function MapView({
       <MapContainer>
         {mapTitles.map((title, i) => {
           return (
-            <Map
+            <Map1
               key={i}
               MapSettings={MapSettings}
               title={title}
@@ -372,14 +369,6 @@ export default function MapView({
             })
           : null}
       </Cards>
-      <LegendContainer>
-        <Legend>
-          <svg ref={recentContainer} />
-        </Legend>
-        <Legend>
-          <svg ref={countContainer} />
-        </Legend>
-      </LegendContainer>
       <Row>
         <Button
           onClick={() => {

@@ -1,7 +1,7 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
-import MapView from "../components/trivar/mapView";
+import MapView1 from "../components/trivar/mapView1";
 import ScatterView from "../components/trivar/scatterView";
 import Slider from "../components/trivar/slider";
 import Page from "../components/page";
@@ -16,8 +16,7 @@ const Container = styled.div`
   flex-direction: column;
 `;
 
-
-const Trivariate = () => {
+const Trivariate1 = () => {
 
   const width = 380;
   const height = 250;
@@ -46,7 +45,9 @@ const Trivariate = () => {
   return (
     <Page>
       <Container>
-        <MapView
+        <p>Darker color means fewer number of changes</p>
+        <p>Bigger Radius means more counts</p>
+        <MapView1
           MapSettings={MapSettings}
           selectedCounty={selectedCounty}
           setSelectedCounty={setSelectedCounty}
@@ -58,14 +59,10 @@ const Trivariate = () => {
         {/*<Slider time={time} setTime={setTime}/>*/}
         {/*<p>State Selected: {selectedState[1]}</p>*/}
         <hr style={{ width: "100%"}}/>
-        <ScatterView 
-          selectedCounty={selectedCounty}
-          selectedState={selectedState}
-          time={time}
-          />
+        <p>I think this would end up having a triangular look with one side on yaxis and other vertex above positive x</p>
       </Container>
     </Page>
   );
 };
 
-export default Trivariate;
+export default Trivariate1;
