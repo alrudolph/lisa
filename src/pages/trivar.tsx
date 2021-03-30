@@ -59,9 +59,7 @@ const Trivariate = () => {
         {/*<p>State Selected: {selectedState[1]}</p>*/}
         <hr style={{ width: "100%"}}/>
         <ScatterView 
-          selectedCounty={selectedCounty}
           selectedState={selectedState}
-          time={time}
           />
       </Container>
     </Page>

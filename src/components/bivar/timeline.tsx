@@ -6,11 +6,23 @@ import * as d3 from "d3";
 import { DatesContext } from "../../contexts/datesContext";
 
 const Container = styled.div`
-  width: 60%;
+  width: 700px;
+  height: 150px;
 `;
 
 const Slider = styled.svg`
   width: 100%;
+  height: 90px;
+`;
+
+const ButtonArea = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: center;
+
+  * {
+    margin: 20px;
+  }
 `;
 
 type Props = {
@@ -25,11 +37,13 @@ const convertDate = (d: string): Date => {
 };
 
 const nextDate = (initial: Date, n: number) => {
-  return new Date(
-    initial.getFullYear(),
-    initial.getMonth(),
-    initial.getDate() + n
-  );
+  // return new Date(
+  //   initial.getFullYear(),
+  //   initial.getMonth(),
+  //   initial.getDate() + n
+  // );
+
+  return new Date(initial.getTime() + 24 * 60 * 60 * 1000 * n);
 };
 
 const TimeLine = ({ week, setWeek, playing, setPlaying }: Props) => {
@@ -84,12 +98,20 @@ const TimeLine = ({ week, setWeek, playing, setPlaying }: Props) => {
     }
 
     const newDate = dates[i];
+    const endDate =
+      i + 1 < dates.length
+        ? nextDate(dates[i + 1], -1)
+        : convertDate("2020-12-27");
 
     d3.select(d3Container.current).select("#handle").attr("cx", x(newDate));
     d3.select(d3Container.current)
       .select("#label")
       .attr("x", x(newDate))
-      .text(`${newDate.getMonth() + 1}/${newDate.getDate()}`);
+      .text(
+        `${newDate.getMonth() + 1}/${newDate.getDate()} - ${
+          endDate.getMonth() + 1
+        }/${endDate.getDate()}`
+      );
   };
 
   useEffect(() => {
@@ -99,7 +121,7 @@ const TimeLine = ({ week, setWeek, playing, setPlaying }: Props) => {
       .attr("width", 700)
       .attr("height", 100);
 
-    const slider = svg.append("g").attr("transform", "translate(30, 50)");
+    const slider = svg.append("g").attr("transform", "translate(55, 50)");
 
     slider
       .insert("g")
@@ -114,7 +136,7 @@ const TimeLine = ({ week, setWeek, playing, setPlaying }: Props) => {
 
     slider
       .append("text")
-      .attr("x", x(x.invert(590)))
+      .attr("x", x(x.invert(600)))
       .attr("y", 30)
       .text("2020");
 
@@ -156,17 +178,36 @@ const TimeLine = ({ week, setWeek, playing, setPlaying }: Props) => {
 
   return (
     <Container>
-      <p>
-        Week: {week}, {dates[week].toString()}
-      </p>
       <Slider ref={d3Container} />
-      <button
-        onClick={() => {
-          setPlaying(!playing);
-        }}
-      >
-        Play
-      </button>
+      <ButtonArea>
+        <button
+          onClick={() => {
+            if (week > 0) {
+              setWeek(week - 1);
+            }
+            setPlaying(false);
+          }}
+        >
+          Prev
+        </button>
+        <button
+          onClick={() => {
+            setPlaying(!playing);
+          }}
+        >
+          {playing ? "Pause" : "Play"}
+        </button>
+        <button
+          onClick={() => {
+            if (week < 51) {
+              setWeek(week + 1);
+            }
+            setPlaying(false);
+          }}
+        >
+          Next
+        </button>
+      </ButtonArea>
     </Container>
   );
 };

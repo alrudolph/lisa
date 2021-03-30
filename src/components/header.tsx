@@ -27,7 +27,7 @@ export default function Header() {
         <LinkText to="/bivar">Bivar</LinkText>
         <LinkText to="/trivar">Trivariate</LinkText>
         <LinkText to="/trivar1">Trivariate1</LinkText>
-        <LinkText to="/lasso">lasso</LinkText>
+        <LinkText to="/scatter">Scatter</LinkText>
       </Nav>
     </Container>
   );

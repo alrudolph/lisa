@@ -4,7 +4,6 @@ import styled from "styled-components";
 import * as d3 from "d3";
 
 import Sparse from "../../utility/sparse";
-import { index } from "d3";
 
 const Container = styled.div`
   display: flex;
@@ -20,15 +19,14 @@ const Title = styled.h3`
 
 const MapContainer = styled.svg``;
 
-const getData = (data, time) =>
+const getData = (data) =>
   Object.values(
     data
       .map((d) => {
-        const [hot, cold] = d.count(...time);
+        const [hot, cold] = d.count();
         return {
           x:
-            (hot > cold ? d.recent(...time)[0] : d.recent(...time)[1]) +
-            time[0],
+            (hot > cold ? d.recent()[0] : d.recent()[1]),
           y: hot > cold ? hot : cold,
           hot: hot > cold,
           fips: d.fips,
@@ -58,22 +56,22 @@ const getStateFips = (fips: number): number => {
 
 type Props = {
   title: string;
-  selectedCounty: [number, string];
   selectedState: [number, string];
   data: Array<Sparse>;
-  time: [number, number];
 };
 
 const average = (arr: Array<number>) => {
   return arr.reduce((a, b) => a + b) / arr.length;
 };
 
+const subset = (vals: Array<number>, sel: Array<boolean>) => {
+  return vals.filter((_, i) => sel[i])
+}
+
 export default function ScatterPlot({
   data,
   title,
   selectedState,
-  selectedCounty,
-  time,
 }: Props) {
   const size = 380;
   const scale = 1;
@@ -121,10 +119,7 @@ export default function ScatterPlot({
       .attr("transform", "rotate(-90)")
       .text("Count");
 
-    const dataToPlot = getData(data, time);
-
-    const coldScale = d3.interpolateBlues;
-    const hotScale = d3.interpolateReds;
+    const dataToPlot = getData(data);
 
     const line = d3
       .line()
@@ -163,13 +158,12 @@ export default function ScatterPlot({
       .attr("cx", ({ x }) => xAxis(x))
       .attr("cy", ({ y }) => yAxis(y))
       .attr("r", 2)
-      .style("fill", ({ hot }) => {
-        const avg = average(hot);
-        return avg > 0.5 ? hotScale(avg) : coldScale(1 - avg); // make sure 1 - avg never is 0
-      });
-  }, [time]);
+  }, []);
 
   useEffect(() => {
+    const coldScale = d3.interpolateBlues;
+    const hotScale = d3.interpolateReds;
+
     d3.select(d3Container.current)
       .selectAll(".point")
       .style("fill-opacity", ({ fips }) => {
@@ -177,6 +171,12 @@ export default function ScatterPlot({
           fips.find((f) => getStateFips(f) === selectedState[0]) !== undefined
           ? 1
           : 0.1;
+      })
+      .style("fill", ({ hot, fips }) => {
+        const countiesInState = fips.map(f => selectedState[0] === -1 || getStateFips(f) === selectedState[0]);
+        const countiesInPoint = subset(hot, countiesInState)
+        const avg = average(countiesInPoint.length ? countiesInPoint : hot);
+        return avg > 0.5 ? hotScale(avg) : coldScale(1 - avg); // make sure 1 - avg never is 0
       });
 
     d3.select(d3Container.current)

@@ -68,17 +68,17 @@ export default function MapView({
   const [playing, setPlaying] = useState(false);
 
   useEffect(() => {
-      if (!playing) {
-        return;
-      }
+    if (!playing) {
+      return;
+    }
 
-      const timer = setInterval(() => {
-          if (week < 51) {
-            setWeek(week + 1)
-          }
-      }, 500)
-      return () => clearInterval(timer);
-  }, [playing, week])
+    const timer = setInterval(() => {
+      if (week < 51) {
+        setWeek(week + 1);
+      }
+    }, 500);
+    return () => clearInterval(timer);
+  }, [playing, week]);
 
   return (
     <Container>
@@ -100,18 +100,13 @@ export default function MapView({
           );
         })}
       </MapContainer>
-      <TimeLine week={week} setWeek={setWeek} playing={playing} setPlaying={setPlaying}/>
+      <TimeLine
+        week={week}
+        setWeek={setWeek}
+        playing={playing}
+        setPlaying={setPlaying}
+      />
       <div>
-        <button
-          onClick={() => {
-            if (week < 51) {
-              setWeek(week + 1);
-            }
-            setPlaying(false);
-          }}
-        >
-          CLICK ME
-        </button>
         <form>
           <input
             type="checkbox"

@@ -17,7 +17,7 @@ export default class Sparse {
     /* INSTEAD OF STORING N, STORE LAST AND FIRST WEEK */
 
     constructor(arr: Input, nweek: number, fips: string | number) {
-        
+
         // if (arr.base != 0 && arr.base != 1 && arr.base != 2) {console.log(Object.keys(arr))}
 
         this.base = arr.base;
@@ -41,7 +41,7 @@ export default class Sparse {
         const last = curr === 0 ? [...Array(i).keys()].reduce((acc, curr) => {
             const last = this.get(curr)
             return last !== 0 ? { last, weeks: i - curr } : acc
-        }, { last: -1, weeks: 0}) : { last: curr, weeks: 0 }
+        }, { last: -1, weeks: 0 }) : { last: curr, weeks: 0 }
 
         return {
             curr,

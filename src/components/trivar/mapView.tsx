@@ -347,7 +347,7 @@ export default function MapView({
       <Text>{selectedCounty[1] ? `Selected County: ${selectedCounty[1]} County` : ""}</Text>
       <Cards>
         {selectedCounty[0] !== -1
-          ? [0, 1, 2, 3].map((i) => {
+          ? [0, 2, 1, 3].map((i) => {
               const county = mapData
                 ? mapData[i].filter(
                     (d) => Number(d.fips) === Number(selectedCounty[0])
