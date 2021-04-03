@@ -53,7 +53,7 @@ export default function Scatter() {
   };
 
   return (
-    <Page>
+    <Page selectedPage="Scatter">
       <Container>
         <SelectionContainer>
           <DropDown stateSelector={stateSelector} selectedState={selectedState}/>

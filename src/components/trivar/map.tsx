@@ -110,7 +110,7 @@ const Map = ({
       .enter()
       .append("path")
       .attr("d", map_path as any)
-      .attr("stateFips", ({ id }) => Number(id));
+      .attr("stateFips", ({ id }) => Number(id))
 
     // Counties:
     map_g

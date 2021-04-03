@@ -9,6 +9,7 @@ import { LisaContext } from "../../contexts/lisaContext";
 import Sparse from "../../utility/sparse";
 import Map from "./map";
 import TimeLine from "./timeline";
+import MapZoom from "../../utility/mapZoom";
 
 type Data = Array<Sparse>;
 
@@ -27,6 +28,8 @@ type Props = {
   setTime: ([n1, n2]: [number, number]) => void;
   week: number;
   setWeek: (n: number) => void;
+  selectedState: [number, string];
+  setSelectedState: ([a, b]: [number, string]) => void;
 };
 
 const Container = styled.div`
@@ -60,12 +63,46 @@ export default function MapView({
   setTime,
   week,
   setWeek,
+  selectedState,
+  setSelectedState,
 }: Props) {
   const [past, setPast] = useState(false);
 
   const { mapData, mapTitles } = useContext(LisaContext);
 
   const [playing, setPlaying] = useState(false);
+
+  const [mapZoom, setMapZoom] = useState(Array<MapZoom>(4));
+
+  const addState = (m: MapZoom, i) => {
+    mapZoom[i] = m;
+    setMapZoom(mapZoom);
+  };
+
+  const stateSelector = (
+    [id, name]: [number, string],
+    reset: boolean = false
+  ) => {
+    let zooming: boolean;
+
+    mapZoom.forEach((m) => {
+      if (!reset && id !== m.currId && id !== -1) {
+        m.select(id);
+        zooming = true;
+      } else {
+        m.reset();
+        zooming = false;
+      }
+    });
+
+    if (zooming) {
+      setSelectedState([id, name]);
+      return true;
+    } else {
+      setSelectedState([-1, ""]);
+      return false;
+    }
+  };
 
   useEffect(() => {
     if (!playing) {
@@ -82,6 +119,18 @@ export default function MapView({
 
   return (
     <Container>
+      <div>
+        <form>
+          <input
+            type="checkbox"
+            id="1"
+            name="here"
+            value="sad"
+            onChange={() => setPast(!past)}
+          ></input>
+          <label htmlFor="1">Show Past Values</label>
+        </form>
+      </div>
       <MapContainer>
         {mapTitles.map((title, i) => {
           return (
@@ -91,6 +140,9 @@ export default function MapView({
               countiesMap={counties}
               highlightedCounty={selectedCounty}
               countySelector={setSelectedCounty}
+              selectedState={selectedState}
+              stateSelector={stateSelector}
+              addState={(m: MapZoom) => addState(m, i)}
               time={time}
               data={mapData ? mapData[i] : null}
               weekNum={week}
@@ -106,18 +158,6 @@ export default function MapView({
         playing={playing}
         setPlaying={setPlaying}
       />
-      <div>
-        <form>
-          <input
-            type="checkbox"
-            id="1"
-            name="here"
-            value="sad"
-            onChange={() => setPast(!past)}
-          ></input>
-          <label htmlFor="1">Show Past Values</label>
-        </form>
-      </div>
     </Container>
   );
 }

@@ -11,7 +11,15 @@ module.exports = {
         jsxPragma: 'jsx',
         allExtensions: true
       }
-    }
+    },
+    {
+      resolve: 'gatsby-source-filesystem',
+      options: {
+        name: 'data',
+        path: `${__dirname}/src/data/`
+      },
+    },
+    'gatsby-transformer-csv'
   ],
   pathPrefix: "/lisa"
 };

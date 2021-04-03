@@ -43,7 +43,7 @@ const Trivariate1 = () => {
   const [time, setTime] = useState<[number, number]>([0, 52])
 
   return (
-    <Page>
+    <Page selectedPage="Static1">
       <Container>
         <p>Darker color means fewer number of changes</p>
         <p>Bigger Radius means more counts</p>

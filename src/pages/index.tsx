@@ -22,7 +22,7 @@ import dates from "../data/dates.json"
 
 
 const Index = () => {
-  return <Page>Hello</Page>
+  return <Page selectedPage="Home">Hello</Page>
 };
 
 export default Index;

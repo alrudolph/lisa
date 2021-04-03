@@ -44,7 +44,7 @@ const Trivariate = () => {
   const [time, setTime] = useState<[number, number]>([0, 52])
 
   return (
-    <Page>
+    <Page selectedPage="Static">
       <Container>
         <MapView
           MapSettings={MapSettings}

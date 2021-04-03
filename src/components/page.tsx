@@ -2,11 +2,17 @@ import React from "react";
 import styled from "styled-components";
 import Header from "./header";
 
+import GlobalStyle from "../styles/globalStyles"
+
 import { LisaData } from "../contexts/lisaContext";
 import { DatesData } from "../contexts/datesContext";
 
 const Centered = styled.div`
-  width: 60%;
+  width: 920px;
+
+  @media (max-width: 930px) {
+    width: 100%;
+  }
 `;
 
 const Container = styled.div`
@@ -17,11 +23,12 @@ const Container = styled.div`
   flex-direction: column;
 `;
 
-export default function Page({ children }) {
+export default function Page({ children, selectedPage }) {
   return (
     <Container>
+      <GlobalStyle />
+      <Header selectedPage={selectedPage}/>
       <Centered>
-        <Header />
         <LisaData>
           <DatesData>{children}</DatesData>
         </LisaData>

@@ -80,7 +80,10 @@ export default function StateSelection({
           Number(this.getAttribute("stateFips")),
           this.getAttribute("stateName"),
         ]);
-      });
+      })
+      .style("fill",  function () {
+        return Number(this.getAttribute("stateFips")) === highlightedState[0] ? "rgb(0,54,96)" : "#ffffffff"
+      })
   }, [highlightedState]);
 
   return (
