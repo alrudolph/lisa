@@ -1,0 +1,2 @@
+(self.webpackChunkmy_gatsby_site=self.webpackChunkmy_gatsby_site||[]).push([[691],{9717:function(e,t,s){"use strict";s.r(t);var u=s(7294),a=s(8673);t.default=function(){return u.createElement(a.Z,{selectedPage:"About"},"Hello")}}}]);
+//# sourceMappingURL=component---src-pages-index-tsx-3f3b38196e63f80f2ef1.js.map
