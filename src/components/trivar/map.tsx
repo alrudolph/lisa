@@ -1,9 +1,10 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useContext } from "react";
 import styled from "styled-components";
 
 import * as d3 from "d3";
 import * as topojson from "topojson";
 
+import { MapsContext } from "../../contexts/mapsContext";
 import MapZoom from "../../utility/mapZoom";
 import Sparse from "../../utility/sparse";
 
@@ -15,6 +16,7 @@ const Container = styled.div`
   margin: 10px 20px;
 
   @media (max-width: 830px) {
+    margin: 10px 5px;
   }
   @media (max-width: 700px) {
     margin: 0;
@@ -44,7 +46,8 @@ const MapContainer = styled.svg`
     stroke-width: 0;
   }
 
-  border: 1px solid ${({ border }: { border: boolean }) => (border ? "black" : "white")};
+  border: 1px solid
+    ${({ border }: { border: boolean }) => (border ? "black" : "white")};
 `;
 
 const getStateFips = (fips: number): number => {
@@ -96,6 +99,8 @@ const Map = ({
   const projection = d3.geoAlbers().scale(scale).translate(translate);
   const map_path = d3.geoPath().projection(projection);
 
+  const { counties, states } = useContext(MapsContext);
+
   useEffect(() => {
     const map_g = d3
       .select(d3Container.current)
@@ -112,7 +117,7 @@ const Map = ({
       .style("stroke-width", "0.5px")
       .style("fill", "#ffffffff")
       .selectAll("path")
-      .data(topojson.feature(countiesMap, countiesMap.objects.states).features)
+      .data(states)
       .enter()
       .append("path")
       .attr("d", map_path as any)
@@ -122,9 +127,7 @@ const Map = ({
     map_g
       .append("g")
       .selectAll("path")
-      .data(
-        topojson.feature(countiesMap, countiesMap.objects.counties).features
-      )
+      .data(counties)
       .enter()
       .append("path")
       .attr("d", map_path as any)
@@ -217,7 +220,11 @@ const Map = ({
   return (
     <Container>
       <Title>{title}</Title>
-      <MapContainer ref={d3Container} county={highlightedCounty[0]} border={highlightedState[0] !== -1}/>
+      <MapContainer
+        ref={d3Container}
+        county={highlightedCounty[0]}
+        border={highlightedState[0] !== -1}
+      />
     </Container>
   );
 };

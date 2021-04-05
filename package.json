@@ -10,7 +10,7 @@
     "start": "gatsby develop",
     "clean": "gatsby clean",
     "deploy": "gatsby clean && gatsby build --prefix-paths && gh-pages -d public -b gh-pages",
-    "deploy-prod": "gatsby clean && gatsby build --prefix-paths && gh-pages -d public -b prod"
+    "deploy-move": "gatsby clean && gatsby build --prefix-paths && gh-pages -d public -b main --repo https://github.com/move-ucsb/covid19-mobility-vis.git"
   },
   "dependencies": {
     "@types/d3": "^6.3.0",
