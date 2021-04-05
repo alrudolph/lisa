@@ -9,7 +9,6 @@ import { DatesData } from "../contexts/datesContext";
 
 const Centered = styled.div`
   width: 920px;
-
   @media (max-width: 930px) {
     width: 100%;
   }

@@ -17,7 +17,9 @@ const Title = styled.h3`
   margin: 0;
 `;
 
-const MapContainer = styled.svg``;
+const MapContainer = styled.svg`
+  height: 330px;
+`;
 
 const getData = (data) =>
   Object.values(
@@ -87,10 +89,10 @@ export default function ScatterPlot({
 
     const map_g = svg
       .attr("width", size)
-      .attr("height", size)
+      .attr("height", size - 40)
       .append("g")
       .attr("scale", 10)
-      .attr("transform", `translate(${margin})`);
+      .attr("transform", `translate(${margin[0]}, ${margin[1] - 40})`);
 
     const xAxis = d3.scaleLinear().domain([0, 52]).range([0, width]);
 
@@ -107,7 +109,7 @@ export default function ScatterPlot({
       .append("text")
       .attr("text-anchor", "end")
       .attr("x", width / 2 + 100)
-      .attr("y", height + 85)
+      .attr("y", height + 85 - 40)
       .text("Week Number");
 
     svg

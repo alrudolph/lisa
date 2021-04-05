@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useContext } from "react";
 import styled from "styled-components";
 
 import * as d3 from "d3";
@@ -7,12 +7,23 @@ import * as topojson from "topojson";
 import Sparse from "../../utility/sparse";
 import MapZoom from "../../utility/mapZoom";
 
+import { MapsContext } from "../../contexts/mapsContext";
+
+import countiesMap from "us-atlas/counties-10m.json";
+
 const Container = styled.div`
   display: flex;
+  flex-wrap: wrap;
   flex-direction: column;
   align-items: center;
+  margin: 10px 20px;
 
-  margin: 10px;
+  @media (max-width: 830px) {
+    margin: 10px 5px;
+  }
+  @media (max-width: 700px) {
+    margin: 0;
+  }
 `;
 
 const Title = styled.h3`
@@ -40,7 +51,6 @@ type MapSettings = {
 
 interface Props {
   title: string;
-  countiesMap: any;
   highlightedCounty: [number, string];
   countySelector: ([s, s1]: [number, string]) => void;
   data: MapData;
@@ -58,7 +68,6 @@ const getStateFips = (fips: number): number => {
 };
 const Map = ({
   title,
-  countiesMap,
   highlightedCounty,
   countySelector,
   data,
@@ -74,11 +83,11 @@ const Map = ({
 
   const d3Container = useRef(null);
 
+  const { counties, states } = useContext(MapsContext);
   useEffect(() => {
-
     const projection = d3.geoAlbers().scale(scale).translate(translate);
     const map_path = d3.geoPath().projection(projection);
-    
+
     const map_g = d3
       .select(d3Container.current)
       .attr("width", width)
@@ -94,7 +103,7 @@ const Map = ({
       .style("stroke-width", "0.5px")
       .style("fill", "#ffffffff")
       .selectAll("path")
-      .data(topojson.feature(countiesMap, countiesMap.objects.states).features)
+      .data(states)
       .enter()
       .append("path")
       .attr("d", map_path as any)
@@ -104,16 +113,14 @@ const Map = ({
     map_g
       .append("g")
       .selectAll("path")
-      .data(
-        topojson.feature(countiesMap, countiesMap.objects.counties).features
-      )
+      .data(counties)
       .enter()
       .append("path")
       .attr("d", map_path as any)
       .attr("stateName", ({ id }) => {
-        return countiesMap.objects.states.geometries.filter((val) => {
+        return countiesMap.objects.states.geometries.find((val) => {
           return getStateFips(id) === Number(val.id);
-        })[0].properties.name;
+        }).properties.name;
       })
       .attr("id", ({ id }) => `c${Number(id)}`)
       //   .attr("countyName", ({ properties: { name } }) => name)
@@ -136,7 +143,9 @@ const Map = ({
         col = (curr !== 0 && curr === 1) || last === 1 ? "#fa5a50" : "#5768ac";
 
         // this is just the last week number, not number since last weeks so we can change calculation back
-        opac = curr ? 1 : (weekNum - weeks + 1) / (weekNum + 1) * Number(last !== -1);
+        opac = curr
+          ? 1
+          : ((weekNum - weeks + 1) / (weekNum + 1)) * Number(last !== -1);
       }
 
       // Reduce opacity for states taht aren't selected

@@ -4,12 +4,25 @@ import styled from "styled-components";
 import statesMap from "us-atlas/states-10m.json";
 const DropDownContainer = styled.div`
   width: 400px;
+  padding: 10px;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
 `;
 
 type Props = {
   selectedState: [number, string];
   stateSelector: ([a, b]: [number, string]) => void;
 };
+
+const Button = styled.button`
+  border-radius: 10px;
+  height: 30px;
+  width: 60px;
+`;
 
 export default function DropDown({ stateSelector, selectedState }: Props) {
   const statevals = [
@@ -37,28 +50,34 @@ export default function DropDown({ stateSelector, selectedState }: Props) {
   });
   return (
     <DropDownContainer>
-      <label htmlFor="states">Choose a State:</label>
-      {""}
-      <select
-        id="states"
-        onChange={({
-          currentTarget: { value },
-          target: { selectedOptions },
-        }) => {
-          stateSelector([Number(value), selectedOptions[0].text]);
-        }}
-        value={selectedState[0]}
-      >
-        {statevals.map(({ id, properties: { name } }) => {
-          return (
-            <option value={Number(id)} key={id}>
-              {name}
-            </option>
-          );
-        })}
-      </select>
-      <p>Select a state from the drop down or by clicking on the map</p>
-      <button onClick={() => stateSelector([-1, ""])}>Reset</button>
+      <p>Select a state from the drop down or by clicking on the map.</p>
+      <ButtonContainer>
+        <div>
+          {" "}
+          <label htmlFor="states">Choose a State:</label>
+          {""}
+          <select
+            id="states"
+            onChange={({
+              currentTarget: { value },
+              target: { selectedOptions },
+            }) => {
+              stateSelector([Number(value), selectedOptions[0].text]);
+            }}
+            value={selectedState[0]}
+          >
+            {statevals.map(({ id, properties: { name } }) => {
+              return (
+                <option value={Number(id)} key={id}>
+                  {name}
+                </option>
+              );
+            })}
+          </select>
+        </div>
+        <Button onClick={() => stateSelector([-1, ""])}>Reset</Button>
+      </ButtonContainer>
+      <p>Selecting a state will highlight that states' counties in the scatter plot below and show the cumulative trajectory over the year.</p>
     </DropDownContainer>
   );
 }

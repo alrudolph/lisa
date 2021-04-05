@@ -9,12 +9,17 @@ import Sparse from "../../utility/sparse";
 
 const Container = styled.div`
   display: flex;
+  flex-wrap: wrap;
   flex-direction: column;
   align-items: center;
+  margin: 10px 20px;
 
-  margin: 10px;
+  @media (max-width: 830px) {
+  }
+  @media (max-width: 700px) {
+    margin: 0;
+  }
 `;
-
 const Title = styled.h3`
   margin: 0;
 `;
@@ -24,7 +29,6 @@ const MapContainer = styled.svg`
     background-color: light-gray;
     fill: red;
   }
-  border: 1px solid black;
 
   #c${({ county }: { county: number }) => county}.cboundary {
     stroke: black;
@@ -39,6 +43,8 @@ const MapContainer = styled.svg`
   .bubble {
     stroke-width: 0;
   }
+
+  border: 1px solid ${({ border }: { border: boolean }) => (border ? "black" : "white")};
 `;
 
 const getStateFips = (fips: number): number => {
@@ -110,7 +116,7 @@ const Map = ({
       .enter()
       .append("path")
       .attr("d", map_path as any)
-      .attr("stateFips", ({ id }) => Number(id))
+      .attr("stateFips", ({ id }) => Number(id));
 
     // Counties:
     map_g
@@ -211,7 +217,7 @@ const Map = ({
   return (
     <Container>
       <Title>{title}</Title>
-      <MapContainer ref={d3Container} county={highlightedCounty[0]} />
+      <MapContainer ref={d3Container} county={highlightedCounty[0]} border={highlightedState[0] !== -1}/>
     </Container>
   );
 };

@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import styled from "styled-components";
+import ReactDOM from "react-dom";
 
 import * as d3 from "d3";
 import * as topojson from "topojson";
@@ -40,7 +41,6 @@ type MapSettings = {
 
 interface Props {
   title: string;
-  countiesMap: any;
   highlightedCounty: [number, string];
   countySelector: ([s, s1]: [number, string]) => void;
   data: MapData;
@@ -51,14 +51,14 @@ interface Props {
   addState: (m: MapZoom) => void;
   stateSelector: ([a, b]: [number, string]) => void;
   selectedState: [number, string];
+  d3Container: any;
 }
 
 const getStateFips = (fips: number): number => {
   return Number(String(fips).slice(0, -3));
 };
-const Map = ({
+const Map1 = ({
   title,
-  countiesMap,
   highlightedCounty,
   countySelector,
   data,
@@ -69,59 +69,23 @@ const Map = ({
   addState,
   stateSelector,
   selectedState,
+  d3Container,
 }: Props) => {
-  const { scale, translate, width, height } = MapSettings;
+  const map_svg = useRef(null);
 
-  const d3Container = useRef(null);
+  const { height, width } = MapSettings;
 
   useEffect(() => {
+    if (map_svg && map_svg.current) {
+      console.log("COPYING");
+      const { elem, path, svg } = d3Container.copy();
 
-    const projection = d3.geoAlbers().scale(scale).translate(translate);
-    const map_path = d3.geoPath().projection(projection);
-    
-    const map_g = d3
-      .select(d3Container.current)
-      .attr("width", width)
-      .attr("height", height)
-      .append("g");
+      map_svg.current.appendChild(elem);
 
-    addState(new MapZoom(map_path, map_g, width, height, selectedState[0]));
-
-    // States:
-    map_g
-      .append("g")
-      .style("stroke", "black")
-      .style("stroke-width", "0.5px")
-      .style("fill", "#ffffffff")
-      .selectAll("path")
-      .data(topojson.feature(countiesMap, countiesMap.objects.states).features)
-      .enter()
-      .append("path")
-      .attr("d", map_path as any)
-      .attr("stateFips", ({ id }) => Number(id));
-
-    // Counties:
-    map_g
-      .append("g")
-      .selectAll("path")
-      .data(
-        topojson.feature(countiesMap, countiesMap.objects.counties).features
-      )
-      .enter()
-      .append("path")
-      .attr("d", map_path as any)
-      .attr("stateName", ({ id }) => {
-        return countiesMap.objects.states.geometries.filter((val) => {
-          return getStateFips(id) === Number(val.id);
-        })[0].properties.name;
-      })
-      .attr("id", ({ id }) => `c${Number(id)}`)
-      //   .attr("countyName", ({ properties: { name } }) => name)
-      .attr("class", "cboundary")
-      .style("fill", "#00000000");
-    // .style("stroke-width", 0)
-    // .style("stroke", "#FFFFFF00")
-  }, []);
+      const g = d3.select(map_svg.current).select("#states")
+      addState(new MapZoom(path, g, width, height, -1));
+    }
+  }, [map_svg]);
 
   useEffect(() => {
     data.forEach((d) => {
@@ -136,7 +100,9 @@ const Map = ({
         col = (curr !== 0 && curr === 1) || last === 1 ? "#fa5a50" : "#5768ac";
 
         // this is just the last week number, not number since last weeks so we can change calculation back
-        opac = curr ? 1 : (weekNum - weeks + 1) / (weekNum + 1) * Number(last !== -1);
+        opac = curr
+          ? 1
+          : ((weekNum - weeks + 1) / (weekNum + 1)) * Number(last !== -1);
       }
 
       // Reduce opacity for states taht aren't selected
@@ -148,32 +114,32 @@ const Map = ({
           )
       );
 
-      const sel = d3.select(d3Container.current).select(`#c${d.fips}`);
+      const sel = d3.select(map_svg.current).select(`#c${d.fips}`);
       sel.style("fill", col);
       sel.style("fill-opacity", opac);
     });
   }, [weekNum, past, selectedState]);
 
   useEffect(() => {
-    d3.select(d3Container.current)
+    d3.select(map_svg.current.childNodes[0])
       .selectAll(".cboundary")
-      .on("click", function ({ currentTarget }, { id }) {
+      .on("click", function ({ target: { id, attributes }}) {
         stateSelector([
-          getStateFips(id),
-          currentTarget.getAttribute("stateName"),
+          getStateFips(id.substr(1)),
+          attributes[1].value,
         ]);
       });
-    // .style("fill-opacity", function( { id }){
-    //   return getStateFips(id) === selectedState[0] || selectedState[0] === -1 ? "1" : "0.3"
-    // })
+    // // .style("fill-opacity", function( { id }){
+    // //   return getStateFips(id) === selectedState[0] || selectedState[0] === -1 ? "1" : "0.3"
+    // // })
   }, [selectedState]);
 
   return (
     <Container>
       <Title>{title}</Title>
-      <MapContainer ref={d3Container} border={selectedState[0] !== -1} />
+      <div ref={map_svg} />
     </Container>
   );
 };
 
-export default Map;
+export default Map1;

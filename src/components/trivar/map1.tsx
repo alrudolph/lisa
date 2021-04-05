@@ -39,6 +39,7 @@ const MapContainer = styled.svg`
   .bubble {
     stroke-width: 0;
   }
+  border: 1px solid ${({ border }: { border: boolean }) => (border ? "black" : "white")};
 `;
 
 const getStateFips = (fips: number): number => {
@@ -211,7 +212,7 @@ const Map1 = ({
   return (
     <Container>
       <Title>{title}</Title>
-      <MapContainer ref={d3Container} county={highlightedCounty[0]} />
+      <MapContainer ref={d3Container} county={highlightedCounty[0]}  border={highlightedState[0] !== -1}/>
     </Container>
   );
 };

@@ -10,6 +10,7 @@ import MapZoom from "../utility/mapZoom";
 
 import StateSelection from "../components/scatter/stateSelection";
 import DropDown from "../components/scatter/dropdown";
+import { Link } from "gatsby";
 
 const Container = styled.div`
   width: 100%;
@@ -20,8 +21,31 @@ const Container = styled.div`
 
 const SelectionContainer = styled.div`
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 `;
 
+const TextContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  width: 100%;
+
+  & > h1 {
+    margin: 5px 5px 0 5px;
+  }
+`;
+
+const Text = styled.p`
+  margin: 5px;
+`;
+const Divider = styled.hr`
+  width: 98%;
+  height: 1px;
+  background-color: black;
+  border-radius: 1px;
+  margin: 5px 10px;
+`;
 export default function Scatter() {
   const [selectedState, setSelectedState] = useState<[number, string]>([
     -1,
@@ -55,15 +79,41 @@ export default function Scatter() {
   return (
     <Page selectedPage="Scatter">
       <Container>
+        <TextContainer>
+          <h1>Scatter Plots</h1>
+          <Text>
+            This page provides an alternative view to{" "}
+            <Link to="/static">the static choropleth plots page</Link>.
+          </Text>
+          <Text>
+            The scatter plots below show the number of times a county was a hot
+            spot or cold spot vs the last week number it was a significant
+            value. Each point on the scatter plot represents the counties at the
+            specified count and week number. Since multiple counties can be at
+            the same location, the point is color blue if the majority of the
+            counties were cold spots and red if the majority were hot spots. A
+            darker colored point shows a higher proportion of counties being hot
+            or cold spots.
+          </Text>
+        </TextContainer>
+        <Divider />
         <SelectionContainer>
-          <DropDown stateSelector={stateSelector} selectedState={selectedState}/>
+          <DropDown
+            stateSelector={stateSelector}
+            selectedState={selectedState}
+          />
           <StateSelection
             highlightedState={selectedState}
             stateSelector={stateSelector}
             addState={addState}
           />
         </SelectionContainer>
+        <Divider />
         <ScatterView selectedState={selectedState} />
+        <Divider />
+        <TextContainer>
+          <Text></Text>
+        </TextContainer>
       </Container>
     </Page>
   );

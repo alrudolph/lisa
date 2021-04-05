@@ -24,8 +24,8 @@ export default class MapZoom {
 
         const clicked = this.g.select(`[stateFips='${id}']`);
 
-        // this.active.classed("active", false);
-        // this.active = clicked.classed("active", true);
+        // // this.active.classed("active", false);
+        // // this.active = clicked.classed("active", true);
 
         let d;
         clicked.attr('x', (_d, i) => {
@@ -38,6 +38,15 @@ export default class MapZoom {
         const dy = y1 - y0;
         const x = (x0 + x1) / 2;
         const y = (y0 + y1) / 2;
+
+        // const box = d.node().getBBox()
+
+        // const dx = box.width
+        // const dy = box.height
+        // const x = box.x + box.width / 2
+        // const y = box.y + box.height / 2
+
+        // console.log(x, y, dx, dy)
 
         const scaleNew = 0.8 / Math.max(dx / this.width, dy / this.height);
         const translateNew = [this.width / 2 - scaleNew * x, this.height / 2 - scaleNew * y]

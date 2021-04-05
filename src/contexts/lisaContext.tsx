@@ -28,8 +28,8 @@ export const LisaContext = createContext(null);
 export const LisaData = ({ children }) => {
 
   const mapTitles = [
-    "Cuebiq mobility index, rolling avg (Cuebiq)",
-    "% sheltered in place, rolling avg (Cuebiq)",
+    "Cuebiq mobility index (Cuebiq)",
+    "% sheltered in place (Cuebiq)",
     "Median distance traveled (Safegraph)",
     "% sheltered (Safegraph)",
   ];

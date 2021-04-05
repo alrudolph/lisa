@@ -1,16 +1,17 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useContext, useState, useRef } from "react";
 import styled from "styled-components";
 
 import * as d3 from "d3";
 
-import counties from "us-atlas/counties-10m.json";
-
 import { LisaContext } from "../../contexts/lisaContext";
 import Sparse from "../../utility/sparse";
-import Map from "./map";
+import Map1 from "./map1";
 import TimeLine from "./timeline";
-import TimeLineOld from "./timelineOld";
 import MapZoom from "../../utility/mapZoom";
+
+import * as topojson from "topojson";
+
+import CreateMap from "./createMap";
 
 type Data = Array<Sparse>;
 
@@ -31,6 +32,7 @@ type Props = {
   setWeek: (n: number) => void;
   selectedState: [number, string];
   setSelectedState: ([a, b]: [number, string]) => void;
+  MapCreator: any;
 };
 
 const Container = styled.div`
@@ -56,7 +58,7 @@ const MapContainer = styled.div`
     flex-wrap: wrap;
   }
 `;
-export default function MapView({
+export default function MapView1({
   selectedCounty,
   setSelectedCounty,
   MapSettings,
@@ -66,6 +68,7 @@ export default function MapView({
   setWeek,
   selectedState,
   setSelectedState,
+  MapCreator
 }: Props) {
   const [past, setPast] = useState(false);
 
@@ -118,6 +121,8 @@ export default function MapView({
     return () => clearInterval(timer);
   }, [playing, week]);
 
+  console.log("WHAT")
+
   return (
     <Container>
       <div>
@@ -130,13 +135,12 @@ export default function MapView({
           <label htmlFor="Cumulative">Cumulative Map</label>
         </form>
       </div>
-      <MapContainer>
+      <MapContainer id="root">
         {mapTitles.map((title, i) => {
           return (
-            <Map
+            <Map1
               key={i}
               title={title}
-              countiesMap={counties}
               highlightedCounty={selectedCounty}
               countySelector={setSelectedCounty}
               selectedState={selectedState}
@@ -147,11 +151,12 @@ export default function MapView({
               weekNum={week}
               MapSettings={MapSettings}
               past={past}
+              d3Container={MapCreator}
             />
           );
         })}
       </MapContainer>
-      <TimeLineOld
+      <TimeLine
         week={week}
         setWeek={setWeek}
         playing={playing}

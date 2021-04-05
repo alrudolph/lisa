@@ -6,9 +6,29 @@ import { graphql, StaticQuery } from "gatsby";
 import counties from "us-atlas/counties-10m.json";
 import { rgb } from "d3-color";
 
+const OutsideContainer = styled.div`
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+`;
+
+const Container = styled.div`
+  display: block;
+  height: 100%;
+  overflow-x: auto;
+
+  width: 800px;
+
+  @media (max-width: 800px) {
+    width: 100%;
+  }
+`;
+
 const MainTable = styled.table`
   border-collapse: collapse;
-  width: 760px;
+  width: 100%;
 `;
 
 const THead = styled.thead``;
@@ -23,6 +43,7 @@ const THGroup = styled.th`
 `;
 
 const TH = styled.th`
+  min-width: 100px !important;
   text-align: center;
   border-bottom: 1px solid black;
 `;
@@ -30,9 +51,9 @@ const TH = styled.th`
 const TData = styled.td`
   background-color: ${({ highlight }: { highlight: string }) => {
     if (highlight === "hot") {
-      return "#5768acAA";
-    } else if (highlight === "cold") {
       return "#fa5a50AA";
+    } else if (highlight === "cold") {
+      return "#5768acAA";
     }
     return "#FFFFFF00";
   }};
@@ -90,26 +111,38 @@ const TBody = styled.tbody`
 `;
 
 const ColdLegend = styled.p`
-//  background-color: rgba(0, 0, 255, 0.4);
-  background-color: #fa5a50AA;
+  //  background-color: rgba(0, 0, 255, 0.4);
+  background-color: #5768acaa;
 `;
 
 const HotLegend = styled.p`
-//  background-color: rgba(255, 0, 0, 0.4);
-  background-color: #5768acAA;
+  //  background-color: rgba(255, 0, 0, 0.4);
+  background-color: #fa5a50aa;
 `;
 
 const LegendContainer = styled.div`
   display: flex;
-  justify-content: flex-end;
+  width: 800px;
+  margin: 5px 0;
+
+  @media (max-width: 800px) {
+    width: 100%;
+  }
+  justify-content: space-between;
 `;
 
 const Legend = styled.div`
   display: flex;
+  align-items: flex-start;
+
   & > * {
     margin: 5px;
     padding: 5px;
   }
+`;
+
+const LegendAsterisk = styled.p`
+  margin: 5px;
 `;
 
 type Props = {
@@ -123,144 +156,198 @@ const getStateFips = (fips: number): number => {
 
 export default function Table({ selectedState, week }: Props) {
   const { mapData, mapTitles } = useContext(LisaContext);
-
   return (
-    <div>
-      <MainTable>
-        <THead>
-          <TRow>
-            <THGroup underLine={false}>Counties of</THGroup>
-            <THGroup colSpan={4} underLine={true}>
-              Mobility
-            </THGroup>
-            <THGroup colSpan={4} underLine={true}>
-              Sheltered
-            </THGroup>
-          </TRow>
-          <TRow>
-            <TH>{selectedState[1]}</TH>
-            <TH colSpan={2}>Cuebiq*</TH>
-            <TH colSpan={2}>SafeGraph</TH>
-            <TH colSpan={2}>Cuebiq</TH>
-            <TH colSpan={2}>SafeGraph</TH>
-          </TRow>
-        </THead>
-        <TBody>
-          <StaticQuery
-            query={graphql`
-              {
-                allRawCsv {
-                  nodes {
-                    cm
-                    cs
-                    fips
-                    sm
-                    ss
-                    week
+    <OutsideContainer>
+      <Container>
+        <MainTable>
+          <THead>
+            <TRow>
+              <THGroup underLine={false}>Counties of</THGroup>
+              <THGroup colSpan={4} underLine={true}>
+                Mobility
+              </THGroup>
+              <THGroup colSpan={4} underLine={true}>
+                Sheltered
+              </THGroup>
+            </TRow>
+            <TRow>
+              <TH>{selectedState[1]}</TH>
+              <TH colSpan={2}>Cuebiq*</TH>
+              <TH colSpan={2}>SafeGraph</TH>
+              <TH colSpan={2}>Cuebiq</TH>
+              <TH colSpan={2}>SafeGraph</TH>
+            </TRow>
+          </THead>
+          <TBody>
+            <StaticQuery
+              query={graphql`
+                {
+                  allRawCsv {
+                    nodes {
+                      cm
+                      cs
+                      fips
+                      sm
+                      ss
+                      week
+                    }
                   }
                 }
-              }
-            `}
-            render={({ allRawCsv: { nodes } }) => {
-              return nodes
-                .filter(
-                  (node) =>
-                    Number(node.week) - 1 === week &&
-                    getStateFips(node.fips) === selectedState[0]
-                )
-                .map(({ fips, cm, cs, sm, ss }, i) => {
-                  const cmVec = mapData[0].find((d) => d.fips === Number(fips));
-                  const cmVal = cmVec !== undefined ? cmVec.get(week) : 0;
+              `}
+              render={({ allRawCsv: { nodes } }) => {
+                return nodes
+                  .filter(
+                    (node) =>
+                      Number(node.week) - 1 === week &&
+                      getStateFips(node.fips) === selectedState[0]
+                  )
+                  .map(({ fips, cm, cs, sm, ss }, i) => {
+                    const cmVec = mapData[0].find(
+                      (d) => d.fips === Number(fips)
+                    );
+                    const cmVal = cmVec !== undefined ? cmVec.get(week) : 0;
 
-                  const csVec = mapData[1].find((d) => d.fips === Number(fips));
-                  const csVal = csVec !== undefined ? csVec.get(week) : 0;
+                    const csVec = mapData[1].find(
+                      (d) => d.fips === Number(fips)
+                    );
+                    const csVal = csVec !== undefined ? csVec.get(week) : 0;
 
-                  const smVec = mapData[2].find((d) => d.fips === Number(fips));
-                  const smVal = smVec !== undefined ? smVec.get(week) : 0;
+                    const smVec = mapData[2].find(
+                      (d) => d.fips === Number(fips)
+                    );
+                    const smVal = smVec !== undefined ? smVec.get(week) : 0;
 
-                  const ssVec = mapData[3].find((d) => d.fips === Number(fips));
-                  const ssVal = ssVec !== undefined ? ssVec.get(week) : 0;
+                    const ssVec = mapData[3].find(
+                      (d) => d.fips === Number(fips)
+                    );
+                    const ssVal = ssVec !== undefined ? ssVec.get(week) : 0;
 
-                  return (
-                    <TRow key={fips}>
-                      <TData highlight="none">
-                        {
-                          counties.objects.counties.geometries.find(
-                            ({ id }) => Number(id) === Number(fips)
-                          ).properties.name
-                        }
-                      </TData>
-                      <TData
-                        highlight={
-                          cmVal === 1 ? "hot" : cmVal === 2 ? "cold" : "none"
-                        }
-                      >
-                        {cm}
-                      </TData>
-                      <TData
-                        highlight={
-                          cmVal === 1 ? "hot" : cmVal === 2 ? "cold" : "none"
-                        }
-                      ></TData>
-                      <TData
-                        highlight={
-                          smVal === 1 ? "hot" : smVal === 2 ? "cold" : "none"
-                        }
-                      >
-                        {Number(sm) / 1000}
-                      </TData>
+                    return (
+                      <TRow key={fips}>
+                        <TData highlight="none">
+                          {
+                            counties.objects.counties.geometries.find(
+                              ({ id }) => Number(id) === Number(fips)
+                            ).properties.name
+                          }
+                        </TData>
+                        <>
+                          <TData
+                            highlight={
+                              cmVal === 1
+                                ? "hot"
+                                : cmVal === 2
+                                ? "cold"
+                                : "none"
+                            }
+                          >
+                            {cm}
+                            {/*
+                          
+                          UGHHHHHHHHHH neither seems to work ??? 
 
-                      <TData
-                        highlight={
-                          smVal === 1 ? "hot" : smVal === 2 ? "cold" : "none"
-                        }
-                      >
-                        {i === 0 ? "km" : ""}
-                      </TData>
-                      <TData
-                        highlight={
-                          csVal === 1 ? "hot" : csVal === 2 ? "cold" : "none"
-                        }
-                      >
-                        {cs}
-                      </TData>
-
-                      <TData
-                        highlight={
-                          csVal === 1 ? "hot" : csVal === 2 ? "cold" : "none"
-                        }
-                      >
-                        {i === 0 ? "%" : ""}
-                      </TData>
-                      <TData
-                        highlight={
-                          ssVal === 1 ? "hot" : ssVal === 2 ? "cold" : "none"
-                        }
-                      >
-                        {ss}
-                      </TData>
-
-                      <TData
-                        highlight={
-                          ssVal === 1 ? "hot" : ssVal === 2 ? "cold" : "none"
-                        }
-                      >
-                        {i === 0 ? "%" : ""}
-                      </TData>
-                    </TRow>
-                  );
-                });
-            }}
-          />
-        </TBody>
-      </MainTable>
+                          https://help.cuebiq.com/hc/en-us/articles/360041285051-Cuebiq-s-COVID-19-Mobility-Index-CMI-#:~:text=Cuebiq's%20Mobility%20Index%20Analysis%20is,movement%20within%20respective%20geographical%20areas. 
+                          */}
+                            {/*Math.round(cm * Math.pow(10, Math.floor(cm)) / 1000)*/}
+                            {/*Math.round((Math.pow(10, cm) - 1) / 1000)*/}
+                          </TData>
+                          <TData
+                            highlight={
+                              cmVal === 1
+                                ? "hot"
+                                : cmVal === 2
+                                ? "cold"
+                                : "none"
+                            }
+                          ></TData>
+                        </>
+                        <>
+                          <TData
+                            highlight={
+                              smVal === 1
+                                ? "hot"
+                                : smVal === 2
+                                ? "cold"
+                                : "none"
+                            }
+                          >
+                            {Number(sm) / 1000}
+                          </TData>
+                          <TData
+                            highlight={
+                              smVal === 1
+                                ? "hot"
+                                : smVal === 2
+                                ? "cold"
+                                : "none"
+                            }
+                          >
+                            {i === 0 ? "km" : ""}
+                          </TData>
+                        </>
+                        <>
+                          <TData
+                            highlight={
+                              csVal === 1
+                                ? "hot"
+                                : csVal === 2
+                                ? "cold"
+                                : "none"
+                            }
+                          >
+                            {cs}
+                          </TData>
+                          <TData
+                            highlight={
+                              csVal === 1
+                                ? "hot"
+                                : csVal === 2
+                                ? "cold"
+                                : "none"
+                            }
+                          >
+                            {i === 0 ? "%" : ""}
+                          </TData>
+                        </>
+                        <>
+                          <TData
+                            highlight={
+                              ssVal === 1
+                                ? "hot"
+                                : ssVal === 2
+                                ? "cold"
+                                : "none"
+                            }
+                          >
+                            {ss}
+                          </TData>
+                          <TData
+                            highlight={
+                              ssVal === 1
+                                ? "hot"
+                                : ssVal === 2
+                                ? "cold"
+                                : "none"
+                            }
+                          >
+                            {i === 0 ? "%" : ""}
+                          </TData>
+                        </>
+                      </TRow>
+                    );
+                  });
+              }}
+            />
+          </TBody>
+        </MainTable>
+      </Container>
       <LegendContainer>
-        <p>* have own custom metric</p>
+        <LegendAsterisk>* Cuebiq mobility value is an index.</LegendAsterisk>
         <Legend>
           <HotLegend>Hot Spot</HotLegend>
           <ColdLegend>Cold Spot</ColdLegend>
         </Legend>
       </LegendContainer>
-    </div>
+    </OutsideContainer>
   );
 }

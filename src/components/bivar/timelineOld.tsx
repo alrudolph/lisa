@@ -5,14 +5,20 @@ import * as d3 from "d3";
 
 import { DatesContext } from "../../contexts/datesContext";
 
+import { PlayCircleFill } from "@styled-icons/bootstrap/PlayCircleFill";
+import { PauseCircleFill } from "@styled-icons/bootstrap/PauseCircleFill";
+import { SkipPreviousCircle } from "@styled-icons/boxicons-solid/SkipPreviousCircle";
+import { SkipNextCircle } from "@styled-icons/boxicons-solid/SkipNextCircle";
+import { Restart } from "@styled-icons/remix-fill/Restart";
+
 const Container = styled.div`
   width: 760px;
-  height: 200px;
+  height: 150px;
 `;
 
 const Slider = styled.svg`
   width: 760px;
-  height: 150px;
+  height: 100px;
 `;
 
 const ButtonArea = styled.div`
@@ -21,8 +27,16 @@ const ButtonArea = styled.div`
   justify-content: center;
 
   * {
-    margin: 20px;
+    margin: 5px 10px;
   }
+
+  & > *:hover {
+    cursor: pointer;
+  }
+`;
+
+const Button = styled.button`
+  border-radius: 10px;
 `;
 
 type Props = {
@@ -30,6 +44,7 @@ type Props = {
   setWeek: (number) => void;
   playing: boolean;
   setPlaying: (b: boolean) => void;
+  width: number;
 };
 
 const convertDate = (d: string): Date => {
@@ -46,7 +61,9 @@ const nextDate = (initial: Date, n: number) => {
   return new Date(initial.getTime() + 24 * 60 * 60 * 1000 * n);
 };
 
-const TimeLineOld = ({ week, setWeek, playing, setPlaying }: Props) => {
+const TimeLine = ({ week, setWeek, playing, setPlaying, width }: Props) => {
+  console.log(width)
+
   const months = [
     "Jan",
     "Feb",
@@ -114,27 +131,16 @@ const TimeLineOld = ({ week, setWeek, playing, setPlaying }: Props) => {
       );
   };
 
-  const nationalEvents = [
-    {
-      date: "2020-03-13",
-      lab: "National Emergency",
-    },
-    {
-      date: "2020-05-28",
-      lab: "100k Deaths",
-    },
-  ];
-
   useEffect(() => {
     const svg = d3
       .select(d3Container.current)
       .append("svg")
       .attr("width", 760)
-      .attr("height", 150);
+      .attr("height", 100);
 
     const slider = svg
       .append("g")
-      .attr("transform", "translate(80, 100)")
+      .attr("transform", "translate(80, 50)")
       .attr("id", "slider");
 
     slider
@@ -148,8 +154,8 @@ const TimeLineOld = ({ week, setWeek, playing, setPlaying }: Props) => {
       .attr("text-anchor", "middle")
       .text(({ d }) => months[d.getMonth()]);
 
-    slider.append("g").attr("id", "eventTitles")
-    slider.append("g").attr("id", "eventConnectors")
+    slider.append("g").attr("id", "eventTitles");
+    slider.append("g").attr("id", "eventConnectors");
 
     slider
       .append("text")
@@ -175,8 +181,6 @@ const TimeLineOld = ({ week, setWeek, playing, setPlaying }: Props) => {
       .attr("text-anchor", "middle")
       .attr("transform", "translate(0,-20)");
 
-    const labelBackground = slider.append("rect").attr("id", "labelBackground")
-
     slider
       .append("line")
       .attr("stroke", "black")
@@ -199,85 +203,63 @@ const TimeLineOld = ({ week, setWeek, playing, setPlaying }: Props) => {
             update(x.invert(event.x));
           })
       );
-  }, []);
-
-  useEffect(() => {
-
-    d3.select(d3Container.current)
-      .select("#eventTitles")
-      .selectAll("text")
-      .remove();
-
-
-    d3.select(d3Container.current)
-      .select("#eventConnectors")
-      .selectAll("line")
-      .remove();
-
-    nationalEvents.forEach(({ date, lab }) => {
-      d3.select(d3Container.current)
-        .select("#eventTitles")
-        .append("text")
-        .attr("fill-opacity", convertDate(date) < dates[week] ? 1 : 0.2)
-        .attr("x", x(convertDate(date)))
-        .attr("y", -50)
-        .attr("text-anchor", "middle")
-        .text(lab);
-
-      d3.select(d3Container.current)
-        .select("#eventConnectors")
-        .append("line")
-        .attr("stroke", "black")
-        .attr("stroke-width", "1px")
-        .attr("stroke-opacity", convertDate(date) < dates[week] ? (nextDate(convertDate(date), 21)  < dates[week] ? 1 : 0.3) : 0.2)
-        .attr("x1", x(convertDate(date)))
-        .attr("x2", x(convertDate(date)))
-        .attr("y1", -15)
-        .attr("y2", -40);
-    });
-  }, [week]);
+  }, [width]);
 
   useEffect(() => {
     update(week);
     d3.select(d3Container.current)
       .select("#weekCounter")
       .text(`${week + 1}/52`);
-  }, [week]);
+  }, [week, width]);
 
   return (
     <Container>
       <Slider ref={d3Container} />
       <ButtonArea>
-        <button
+        <SkipPreviousCircle
+          size="30px"
           onClick={() => {
             if (week > 0) {
               setWeek(week - 1);
             }
             setPlaying(false);
           }}
-        >
-          Prev
-        </button>
-        <button
-          onClick={() => {
-            setPlaying(!playing);
-          }}
-        >
-          {playing ? "Pause" : "Play"}
-        </button>
-        <button
+        />
+        {week === 51 ? (
+          <Restart
+            size="30px"
+            onClick={() => {
+              setWeek(0);
+              setPlaying(false);
+            }}
+          />
+        ) : playing ? (
+          <PauseCircleFill
+            size="30px"
+            onClick={() => {
+              setPlaying(false);
+            }}
+          />
+        ) : (
+          <PlayCircleFill
+            size="30px"
+            onClick={() => {
+              setPlaying(true);
+            }}
+          />
+        )}
+        <SkipNextCircle
+          size="30px"
           onClick={() => {
             if (week < 51) {
               setWeek(week + 1);
             }
             setPlaying(false);
           }}
-        >
-          Next
-        </button>
+        />
       </ButtonArea>
     </Container>
   );
 };
 
-export default TimeLineOld;
+export default TimeLine;
