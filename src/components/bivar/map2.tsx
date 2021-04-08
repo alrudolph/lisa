@@ -33,7 +33,6 @@ const Title = styled.h3`
 const MapContainer = styled.svg`
   g {
     background-color: light-gray;
-    fill: red; // sjakldjsakldjsakljdsklajdkl <----------------------------------
   }
   border: 1px solid
     ${({ border }: { border: boolean }) => (border ? "black" : "white")};
@@ -61,6 +60,7 @@ interface Props {
   addState: (m: MapZoom) => void;
   stateSelector: ([a, b]: [number, string]) => void;
   selectedState: [number, string];
+  children: any;
 }
 
 const getStateFips = (fips: number): number => {
@@ -78,6 +78,7 @@ const Map = ({
   addState,
   stateSelector,
   selectedState,
+  children
 }: Props) => {
   const { scale, translate, width, height } = MapSettings;
 
@@ -181,6 +182,7 @@ const Map = ({
     <Container>
       <Title>{title}</Title>
       <MapContainer ref={d3Container} border={selectedState[0] !== -1} />
+      {children}
     </Container>
   );
 };

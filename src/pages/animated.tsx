@@ -27,7 +27,7 @@ const TextContainer = styled.div`
   width: 100%;
 
   & > h1 {
-    margin: 5px 5px 0 5px;
+    margin: 10px 5px 0 5px;
   }
 `;
 
@@ -76,7 +76,6 @@ const Bivariate = () => {
   useEffect(() => {
     const width = container.current.getBoundingClientRect().width;
     setWidth(width);
-    console.log("SETTING WIDTH", width);
   }, []);
 
   return (

@@ -45,6 +45,7 @@ type Props = {
   playing: boolean;
   setPlaying: (b: boolean) => void;
   width: number;
+  showWeekNumber: boolean;
 };
 
 const convertDate = (d: string): Date => {
@@ -61,9 +62,14 @@ const nextDate = (initial: Date, n: number) => {
   return new Date(initial.getTime() + 24 * 60 * 60 * 1000 * n);
 };
 
-const TimeLine = ({ week, setWeek, playing, setPlaying, width }: Props) => {
-  console.log(width)
-
+const TimeLine = ({
+  week,
+  setWeek,
+  playing,
+  setPlaying,
+  width,
+  showWeekNumber,
+}: Props) => {
   const months = [
     "Jan",
     "Feb",
@@ -163,7 +169,12 @@ const TimeLine = ({ week, setWeek, playing, setPlaying, width }: Props) => {
       .attr("y", 30)
       .text("2020");
 
-    slider.append("text").attr("x", -75).attr("y", 0).text("Week");
+    slider
+      .append("text")
+      .attr("id", "weekLabel")
+      .attr("x", -75)
+      .attr("y", 0)
+      .text("Week");
 
     slider
       .append("text")
@@ -211,6 +222,15 @@ const TimeLine = ({ week, setWeek, playing, setPlaying, width }: Props) => {
       .select("#weekCounter")
       .text(`${week + 1}/52`);
   }, [week, width]);
+
+  useEffect(() => {
+    d3.select(d3Container.current)
+      .select("#weekCounter")
+      .style("fill-opacity", showWeekNumber ? 1 : 0);
+    d3.select(d3Container.current)
+      .select("#weekLabel")
+      .style("fill-opacity", showWeekNumber ? 1 : 0);
+  }, [showWeekNumber]);
 
   return (
     <Container>

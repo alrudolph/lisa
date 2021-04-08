@@ -11,12 +11,13 @@ import { SkipPreviousCircle } from "@styled-icons/boxicons-solid/SkipPreviousCir
 import { SkipNextCircle } from "@styled-icons/boxicons-solid/SkipNextCircle";
 import { Restart } from "@styled-icons/remix-fill/Restart";
 
-const Container = styled.div`
+const ControlContainer = styled.div`
   width: 100%;
 `;
 
 const ButtonArea = styled.div`
   display: flex;
+  flex-wrap: nowrap;
   width: 100%;
   justify-content: center;
 
@@ -33,11 +34,16 @@ const Button = styled.button`
   border-radius: 10px;
 `;
 
+const Container = styled.div`
+  display: flex;
+`;
+
 type Props = {
   week: number;
   setWeek: (number) => void;
   playing: boolean;
   setPlaying: (b: boolean) => void;
+  showWeekNumber: boolean;
 };
 
 const convertDate = (d: string): Date => {
@@ -71,6 +77,7 @@ export default function Controls({
   setWeek,
   playing,
   setPlaying,
+  showWeekNumber,
 }: Props) {
   const months = [
     "Jan",
@@ -91,60 +98,64 @@ export default function Controls({
 
   const newDate = dates[week];
   const endDate =
-  week + 1 < dates.length
+    week + 1 < dates.length
       ? nextDate(dates[week + 1], -1)
       : convertDate("2020-12-27");
+
   return (
     <Container>
-      <TextArea>
-        <Text>Week {week + 1}/52</Text>
-        <Text>
-          {months[newDate.getMonth()]} {newDate.getDate()} - {months[endDate.getMonth()]} {endDate.getDate()}
-        </Text>
-      </TextArea>
-      <ButtonArea>
-        <SkipPreviousCircle
-          size="30px"
-          onClick={() => {
-            if (week > 0) {
-              setWeek(week - 1);
-            }
-            setPlaying(false);
-          }}
-        />
-        {week === 51 ? (
-          <Restart
+      <ControlContainer>
+        <TextArea>
+          {showWeekNumber ? <Text>Week {week + 1}/52</Text> : null}
+          <Text>
+            {months[newDate.getMonth()]} {newDate.getDate()} -{" "}
+            {months[endDate.getMonth()]} {endDate.getDate()}
+          </Text>
+        </TextArea>
+        <ButtonArea>
+          <SkipPreviousCircle
             size="30px"
             onClick={() => {
-              setWeek(0);
+              if (week > 0) {
+                setWeek(week - 1);
+              }
               setPlaying(false);
             }}
           />
-        ) : playing ? (
-          <PauseCircleFill
+          {week === 51 ? (
+            <Restart
+              size="30px"
+              onClick={() => {
+                setWeek(0);
+                setPlaying(false);
+              }}
+            />
+          ) : playing ? (
+            <PauseCircleFill
+              size="30px"
+              onClick={() => {
+                setPlaying(false);
+              }}
+            />
+          ) : (
+            <PlayCircleFill
+              size="30px"
+              onClick={() => {
+                setPlaying(true);
+              }}
+            />
+          )}
+          <SkipNextCircle
             size="30px"
             onClick={() => {
+              if (week < 51) {
+                setWeek(week + 1);
+              }
               setPlaying(false);
             }}
           />
-        ) : (
-          <PlayCircleFill
-            size="30px"
-            onClick={() => {
-              setPlaying(true);
-            }}
-          />
-        )}
-        <SkipNextCircle
-          size="30px"
-          onClick={() => {
-            if (week < 51) {
-              setWeek(week + 1);
-            }
-            setPlaying(false);
-          }}
-        />
-      </ButtonArea>
+        </ButtonArea>
+      </ControlContainer>
     </Container>
   );
 }

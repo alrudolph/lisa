@@ -13,6 +13,7 @@ import Map2 from "./map2";
 import TimeLine from "./timeline";
 import TimeLineOld from "./timelineOld";
 import MapZoom from "../../utility/mapZoom";
+import TimeLineLegend from "./timelinelegend";
 
 import Controls from "./controls";
 
@@ -27,14 +28,50 @@ type MapSettings = {
 
 const ControlArea = styled.div`
   display: flex;
-  width: 98%;
+  width: 100%;
+  justify-content: space-between;
+  flex-wrap: wrap;
 `;
 
 const ControlsContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: center;
+  @media (max-width: 762px) {
+    justify-content: center;
+    width: 100%;
+  }
+`;
+
+const ColdLegend = styled.p`
+  //  background-color: rgba(0, 0, 255, 0.4);
+  background-color: #5768acaa;
+`;
+
+const HotLegend = styled.p`
+  //  background-color: rgba(255, 0, 0, 0.4);
+  background-color: #fa5a50aa;
+`;
+
+const Legend = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  & > * {
+    margin: 5px;
+    padding: 5px;
+  }
+`;
+
+const LegendContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+
+  @media (max-width: 762px) {
+    justify-content: center;
+  }
 `;
 
 type Props = {
@@ -59,8 +96,8 @@ const Container = styled.div`
 const TextContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: start;
-  width: 98%;
+  justify-content: flex-start;
+  max-width: 500px;
 
   & > h1 {
     margin: 5px 5px 0 5px;
@@ -101,11 +138,15 @@ const CheckBox = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
-  width: 140px;
+  width: 180px;
+`;
+
+const Row = styled.div`
+  margin: 0 3px;
 `;
 
 const Title = styled.h3`
-  margin: 0;
+  margin: 0 0 0 5px;
   white-space: nowrap;
 `;
 export default function MapView({
@@ -127,6 +168,8 @@ export default function MapView({
   const [playing, setPlaying] = useState(false);
 
   const [mapZoom, setMapZoom] = useState(Array<MapZoom>(4));
+
+  const [showWeekNumber, setShowWeekNumber] = useState(false);
 
   const addState = (m: MapZoom, i) => {
     mapZoom[i] = m;
@@ -171,8 +214,6 @@ export default function MapView({
     return () => clearInterval(timer);
   }, [playing, week]);
 
-  console.log("WIDTH", width);
-
   return (
     <Container>
       <ControlArea>
@@ -191,21 +232,33 @@ export default function MapView({
         <ControlsContainer>
           <CheckBox>
             <form>
-              <input
-                type="checkbox"
-                id="Cumulative"
-                onChange={() => setPast(!past)}
-              ></input>
-              <label htmlFor="Cumulative" style={{ "white-space": "nowrap" }}>
-                Cumulative Map
-              </label>
+              <Row>
+                <input
+                  type="checkbox"
+                  id="Cumulative"
+                  onChange={() => setPast(!past)}
+                  checked={past}
+                ></input>
+                <label htmlFor="Cumulative">Cumulative Map</label>
+              </Row>
+              <Row>
+                <input
+                  type="checkbox"
+                  id="ShowWeek"
+                  onChange={() => setShowWeekNumber(!showWeekNumber)}
+                  checked={showWeekNumber}
+                ></input>
+                <label htmlFor="ShowWeek">Show Week Number</label>
+              </Row>
             </form>
           </CheckBox>
           <Button
             onClick={() => {
               stateSelector([-1, ""]);
               setWeek(0);
+              setPast(false);
               setPlaying(false);
+              setShowWeekNumber(false);
             }}
           >
             Reset
@@ -213,6 +266,16 @@ export default function MapView({
         </ControlsContainer>
       </ControlArea>
       <Divider />
+      {past ? (
+        <TimeLineLegend week={week} />
+      ) : (
+        <LegendContainer>
+          <Legend>
+            <HotLegend>Hot Spot</HotLegend>
+            <ColdLegend>Cold Spot</ColdLegend>
+          </Legend>
+        </LegendContainer>
+      )}
       <Maps>
         <MapContainer>
           {mapTitles.map((title, i) => {
@@ -230,7 +293,15 @@ export default function MapView({
                 weekNum={week}
                 MapSettings={MapSettings}
                 past={past}
-              />
+              >
+                {i === 3
+                  ? null
+                  : // <Legend>
+                    //   <HotLegend>Hot Spot</HotLegend>
+                    //   <ColdLegend>Cold Spot</ColdLegend>
+                    // </Legend>
+                    null}
+              </Map2>
             );
           })}
         </MapContainer>
@@ -242,9 +313,11 @@ export default function MapView({
           setWeek={setWeek}
           playing={playing}
           setPlaying={setPlaying}
+          showWeekNumber={showWeekNumber}
         />
       ) : (
         <Controls
+          showWeekNumber={showWeekNumber}
           week={week}
           setWeek={setWeek}
           playing={playing}

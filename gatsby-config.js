@@ -22,5 +22,5 @@ module.exports = {
     'gatsby-plugin-react-svg',
     'gatsby-transformer-csv'
   ],
-  pathPrefix: "/lisa"
+  pathPrefix: "/lisa" // "/covid19-mobility-vis"
 };

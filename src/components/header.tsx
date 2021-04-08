@@ -21,12 +21,12 @@ const rotate = keyframes`
   to {
     transform: rotate(360deg);
   }
-`
+`;
 
 const LogoPng = styled.img`
   height: 80px;
   width: auto;
-`
+`;
 
 const Logo = styled(SVGImage)`
   height: 80px;
@@ -169,6 +169,16 @@ const LinkContainer = styled.div`
   }
 `;
 
+console.log(
+  "%cMOVE@UCSB",
+  "background-color: rgb(0, 54, 96); color: white; padding: 10px; font-size: 30px;"
+);
+
+console.log(
+  "%cThis website was made by Alex Rudolph for the MOVE Lab at UCSB. See the source code at: https://github.com/alrudolph/lisa.",
+  "color: rgb(0, 54, 96); font-weight: thin; font-size: 15px; background-color: #D3D3D3; padding: 5px;"
+);
+
 export default function Header({ selectedPage }: { selectedPage: string }) {
   const NavItem = ({ text, to }: { text: string; to: string }) => {
     return (
@@ -186,10 +196,10 @@ export default function Header({ selectedPage }: { selectedPage: string }) {
       <NavBar>
         <a href="https://move.geog.ucsb.edu/">
           {/*<Logo />*/}
-          <LogoPng alt="Move Logo" src={LogoImage}/>
+          <LogoPng alt="Move Logo" src={LogoImage} />
         </a>
         <Nav>
-          {/*<NavItem text="About" to="" />*/}
+          <NavItem text="About" to="" />
           <NavItem text="Animation" to="animated" />
           <NavItem text="Static" to="static" />
           {/*<NavItem text="Static1" to="trivar1" />*/}
