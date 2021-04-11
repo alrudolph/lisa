@@ -27,8 +27,7 @@ const getData = (data) =>
       .map((d) => {
         const [hot, cold] = d.count();
         return {
-          x:
-            (hot > cold ? d.recent()[0] : d.recent()[1]),
+          x: hot > cold ? d.recent()[0] : d.recent()[1],
           y: hot > cold ? hot : cold,
           hot: hot > cold,
           fips: d.fips,
@@ -60,6 +59,9 @@ type Props = {
   title: string;
   selectedState: [number, string];
   data: Array<Sparse>;
+  labels?: Array<any>;
+  arrows?: Array<any>;
+  lines?: Array<any>;
 };
 
 const average = (arr: Array<number>) => {
@@ -67,13 +69,16 @@ const average = (arr: Array<number>) => {
 };
 
 const subset = (vals: Array<number>, sel: Array<boolean>) => {
-  return vals.filter((_, i) => sel[i])
-}
+  return vals.filter((_, i) => sel[i]);
+};
 
 export default function ScatterPlot({
   data,
   title,
   selectedState,
+  labels,
+  arrows,
+  lines
 }: Props) {
   const size = 380;
   const scale = 1;
@@ -114,8 +119,8 @@ export default function ScatterPlot({
 
     svg
       .append("text")
-      .attr("text-anchor", "end")
-      .attr("x", -35 - height / 2)
+      .attr("text-anchor", "middle")
+      .attr("x", -10 - height / 2)
       .attr("y", 10)
       .attr("dy", "0.75em")
       .attr("transform", "rotate(-90)")
@@ -159,7 +164,30 @@ export default function ScatterPlot({
       .attr("class", "point")
       .attr("cx", ({ x }) => xAxis(x))
       .attr("cy", ({ y }) => yAxis(y))
-      .attr("r", 2)
+      .attr("r", 2);
+
+    if (labels !== undefined) {
+      labels.forEach(label => label(svg))
+    }
+    if (arrows !== undefined) {
+      arrows.forEach(arrow => arrow(svg))
+    }
+    if (lines !== undefined) {
+        map_g
+        .selectAll("divLines")
+        .data(lines)
+        .enter()
+        .append("path")
+        // .style("stroke-dasharray", "3, 3")
+        .attr("stroke-width", 2)
+        .attr("stroke-opacity", 1)
+        .attr("stroke", "black")
+        .attr("stroke-dasharray", "1,1")
+        .attr("d", d => {
+          console.log(d);
+          return line(d);
+        })
+    }
   }, []);
 
   useEffect(() => {
@@ -175,8 +203,10 @@ export default function ScatterPlot({
           : 0.1;
       })
       .style("fill", ({ hot, fips }) => {
-        const countiesInState = fips.map(f => selectedState[0] === -1 || getStateFips(f) === selectedState[0]);
-        const countiesInPoint = subset(hot, countiesInState)
+        const countiesInState = fips.map(
+          (f) => selectedState[0] === -1 || getStateFips(f) === selectedState[0]
+        );
+        const countiesInPoint = subset(hot, countiesInState);
         const avg = average(countiesInPoint.length ? countiesInPoint : hot);
         return avg > 0.5 ? hotScale(avg) : coldScale(1 - avg); // make sure 1 - avg never is 0
       });
@@ -184,7 +214,11 @@ export default function ScatterPlot({
     d3.select(d3Container.current)
       .selectAll(".seq")
       .style("stroke", ({ fips, hot }) => {
-        return getStateFips(fips) === selectedState[0] ? (hot ? "#FF0000" : "#0000FF") : "none";
+        return getStateFips(fips) === selectedState[0]
+          ? hot
+            ? "#FF0000"
+            : "#0000FF"
+          : "none";
       });
   }, [selectedState]);
 

@@ -10,7 +10,7 @@ import { Maps } from "../../contexts/mapsContext";
 
 import Sparse from "../../utility/sparse";
 import Map2 from "./map2";
-import TimeLine from "./timeline";
+import TimeLine from "./timeline/timeline";
 import TimeLineOld from "./timelineOld";
 import MapZoom from "../../utility/mapZoom";
 import TimeLineLegend from "./timelinelegend";
@@ -171,6 +171,8 @@ export default function MapView({
 
   const [showWeekNumber, setShowWeekNumber] = useState(false);
 
+  const [showEvents, setShowEvents] = useState(false);
+
   const addState = (m: MapZoom, i) => {
     mapZoom[i] = m;
     setMapZoom(mapZoom);
@@ -250,6 +252,15 @@ export default function MapView({
                 ></input>
                 <label htmlFor="ShowWeek">Show Week Number</label>
               </Row>
+              <Row>
+                <input
+                  type="checkbox"
+                  id="ShowEvents"
+                  onChange={() => setShowEvents(!showEvents)}
+                  checked={showEvents}
+                ></input>
+                <label htmlFor="ShowEvents">Show Timeline Events</label>
+              </Row>
             </form>
           </CheckBox>
           <Button
@@ -259,6 +270,7 @@ export default function MapView({
               setPast(false);
               setPlaying(false);
               setShowWeekNumber(false);
+              setShowEvents(false);
             }}
           >
             Reset
@@ -306,24 +318,15 @@ export default function MapView({
           })}
         </MapContainer>
       </Maps>
-      {width > 750 ? (
-        <TimeLineOld
-          width={width}
-          week={week}
-          setWeek={setWeek}
-          playing={playing}
-          setPlaying={setPlaying}
-          showWeekNumber={showWeekNumber}
-        />
-      ) : (
-        <Controls
-          showWeekNumber={showWeekNumber}
-          week={week}
-          setWeek={setWeek}
-          playing={playing}
-          setPlaying={setPlaying}
-        />
-      )}
+      <TimeLine
+        week={week}
+        setWeek={setWeek}
+        playing={playing}
+        setPlaying={setPlaying}
+        showWeekNumber={showWeekNumber}
+        showEvents={showEvents}
+        mobileMode={width <= 750}
+      />
       <Divider />
     </Container>
   );

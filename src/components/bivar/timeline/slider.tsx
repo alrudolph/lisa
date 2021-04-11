@@ -3,33 +3,19 @@ import styled from "styled-components";
 
 import * as d3 from "d3";
 
-import { DatesContext } from "../../contexts/datesContext";
+import { DatesContext } from "../../../contexts/datesContext";
 
-const Container = styled.div`
+const SliderBar = styled.svg`
   width: 760px;
-  height: 200px;
-`;
-
-const Slider = styled.svg`
-  width: 760px;
-  height: 150px;
-`;
-
-const ButtonArea = styled.div`
-  display: flex;
-  width: 100%;
-  justify-content: center;
-
-  * {
-    margin: 20px;
-  }
+  height: 100px;
 `;
 
 type Props = {
   week: number;
   setWeek: (number) => void;
-  playing: boolean;
   setPlaying: (b: boolean) => void;
+  showWeekNumber: boolean;
+  events: Array<{ date: string; lab: string }>;
 };
 
 const convertDate = (d: string): Date => {
@@ -37,16 +23,15 @@ const convertDate = (d: string): Date => {
 };
 
 const nextDate = (initial: Date, n: number) => {
-  // return new Date(
-  //   initial.getFullYear(),
-  //   initial.getMonth(),
-  //   initial.getDate() + n
-  // );
-
   return new Date(initial.getTime() + 24 * 60 * 60 * 1000 * n);
 };
 
-const TimeLineOld = ({ week, setWeek, playing, setPlaying }: Props) => {
+const Slider = ({
+  week,
+  setWeek,
+  setPlaying,
+  showWeekNumber
+}: Props) => {
   const months = [
     "Jan",
     "Feb",
@@ -61,6 +46,7 @@ const TimeLineOld = ({ week, setWeek, playing, setPlaying }: Props) => {
     "Nov",
     "Dec",
   ];
+  const d3Container = useRef(null);
 
   const dates = useContext(DatesContext).map((d) => convertDate(d));
 
@@ -72,8 +58,6 @@ const TimeLineOld = ({ week, setWeek, playing, setPlaying }: Props) => {
     .filter(({ d }) => {
       return d.getDate() === 1;
     });
-
-  const d3Container = useRef(null);
 
   const x = d3
     .scaleTime()
@@ -114,27 +98,16 @@ const TimeLineOld = ({ week, setWeek, playing, setPlaying }: Props) => {
       );
   };
 
-  const nationalEvents = [
-    {
-      date: "2020-03-13",
-      lab: "National Emergency",
-    },
-    {
-      date: "2020-05-28",
-      lab: "100k Deaths",
-    },
-  ];
-
   useEffect(() => {
     const svg = d3
       .select(d3Container.current)
       .append("svg")
       .attr("width", 760)
-      .attr("height", 150);
+      .attr("height", 100);
 
     const slider = svg
       .append("g")
-      .attr("transform", "translate(80, 100)")
+      .attr("transform", "translate(80, 50)")
       .attr("id", "slider");
 
     slider
@@ -148,16 +121,18 @@ const TimeLineOld = ({ week, setWeek, playing, setPlaying }: Props) => {
       .attr("text-anchor", "middle")
       .text(({ d }) => months[d.getMonth()]);
 
-    slider.append("g").attr("id", "eventTitles")
-    slider.append("g").attr("id", "eventConnectors")
-
     slider
       .append("text")
       .attr("x", x(x.invert(600)))
       .attr("y", 30)
       .text("2020");
 
-    slider.append("text").attr("x", -75).attr("y", 0).text("Week");
+    slider
+      .append("text")
+      .attr("id", "weekLabel")
+      .attr("x", -75)
+      .attr("y", 0)
+      .text("Week");
 
     slider
       .append("text")
@@ -174,8 +149,6 @@ const TimeLineOld = ({ week, setWeek, playing, setPlaying }: Props) => {
       .attr("id", "label")
       .attr("text-anchor", "middle")
       .attr("transform", "translate(0,-20)");
-
-    const labelBackground = slider.append("rect").attr("id", "labelBackground")
 
     slider
       .append("line")
@@ -202,82 +175,22 @@ const TimeLineOld = ({ week, setWeek, playing, setPlaying }: Props) => {
   }, []);
 
   useEffect(() => {
-
-    d3.select(d3Container.current)
-      .select("#eventTitles")
-      .selectAll("text")
-      .remove();
-
-
-    d3.select(d3Container.current)
-      .select("#eventConnectors")
-      .selectAll("line")
-      .remove();
-
-    nationalEvents.forEach(({ date, lab }) => {
-      d3.select(d3Container.current)
-        .select("#eventTitles")
-        .append("text")
-        .attr("fill-opacity", convertDate(date) < dates[week] ? 1 : 0.2)
-        .attr("x", x(convertDate(date)))
-        .attr("y", -50)
-        .attr("text-anchor", "middle")
-        .text(lab);
-
-      d3.select(d3Container.current)
-        .select("#eventConnectors")
-        .append("line")
-        .attr("stroke", "black")
-        .attr("stroke-width", "1px")
-        .attr("stroke-opacity", convertDate(date) < dates[week] ? (nextDate(convertDate(date), 21)  < dates[week] ? 1 : 0.3) : 0.2)
-        .attr("x1", x(convertDate(date)))
-        .attr("x2", x(convertDate(date)))
-        .attr("y1", -15)
-        .attr("y2", -40);
-    });
-  }, [week]);
-
-  useEffect(() => {
     update(week);
     d3.select(d3Container.current)
       .select("#weekCounter")
       .text(`${week + 1}/52`);
   }, [week]);
 
-  return (
-    <Container>
-      <Slider ref={d3Container} />
-      <ButtonArea>
-        <button
-          onClick={() => {
-            if (week > 0) {
-              setWeek(week - 1);
-            }
-            setPlaying(false);
-          }}
-        >
-          Prev
-        </button>
-        <button
-          onClick={() => {
-            setPlaying(!playing);
-          }}
-        >
-          {playing ? "Pause" : "Play"}
-        </button>
-        <button
-          onClick={() => {
-            if (week < 51) {
-              setWeek(week + 1);
-            }
-            setPlaying(false);
-          }}
-        >
-          Next
-        </button>
-      </ButtonArea>
-    </Container>
-  );
+  useEffect(() => {
+    d3.select(d3Container.current)
+      .select("#weekCounter")
+      .style("fill-opacity", showWeekNumber ? 1 : 0);
+    d3.select(d3Container.current)
+      .select("#weekLabel")
+      .style("fill-opacity", showWeekNumber ? 1 : 0);
+  }, [showWeekNumber]);
+
+  return <SliderBar ref={d3Container} />;
 };
 
-export default TimeLineOld;
+export default Slider;

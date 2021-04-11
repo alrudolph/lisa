@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-import MapView from "../components/trivar/mapView";
-import ScatterView from "../components/trivar/scatterView";
-import Slider from "../components/trivar/slider";
+import ScatterView from "../components/scatter/scatterView";
 import Page from "../components/page";
 
 import MapZoom from "../utility/mapZoom";
 
+import ExplanationExample from "../components/scatter/examples/explanationExample";
+import WeekStartExample from "../components/scatter/examples/weekStartExample";
+import FlatRegionsExample from "../components/scatter/examples/flatRegionsExample";
 import StateSelection from "../components/scatter/stateSelection";
 import DropDown from "../components/scatter/dropdown";
 import { Link } from "gatsby";
@@ -114,6 +115,9 @@ export default function Scatter() {
         <TextContainer>
           <Text></Text>
         </TextContainer>
+        <ExplanationExample/>
+        <WeekStartExample />
+        <FlatRegionsExample />
       </Container>
     </Page>
   );

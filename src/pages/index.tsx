@@ -37,6 +37,7 @@ const Text = styled.p`
 `;
 
 const Index = () => {
+  
   return (
     <Page selectedPage="About">
       <TextContainer>
