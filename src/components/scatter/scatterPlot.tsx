@@ -93,7 +93,7 @@ export default function ScatterPlot({
     const svg = d3.select(d3Container.current);
 
     const map_g = svg
-      .attr("width", size)
+      .attr("width", size - 40)
       .attr("height", size - 40)
       .append("g")
       .attr("scale", 10)
@@ -127,6 +127,10 @@ export default function ScatterPlot({
       .text("Count");
 
     const dataToPlot = getData(data);
+
+    // console.log(
+    //   dataToPlot.filter(({x , y}) => x === 52 && y === 20)
+    // )
 
     const line = d3
       .line()
@@ -184,7 +188,6 @@ export default function ScatterPlot({
         .attr("stroke", "black")
         .attr("stroke-dasharray", "1,1")
         .attr("d", d => {
-          console.log(d);
           return line(d);
         })
     }
@@ -197,7 +200,7 @@ export default function ScatterPlot({
     d3.select(d3Container.current)
       .selectAll(".point")
       .style("fill-opacity", ({ fips }) => {
-        return selectedState[0] === -1 ||
+        return selectedState[0] < 0 ||
           fips.find((f) => getStateFips(f) === selectedState[0]) !== undefined
           ? 1
           : 0.1;
@@ -214,7 +217,7 @@ export default function ScatterPlot({
     d3.select(d3Container.current)
       .selectAll(".seq")
       .style("stroke", ({ fips, hot }) => {
-        return getStateFips(fips) === selectedState[0]
+        return selectedState[0] === -2 || getStateFips(fips) === selectedState[0]
           ? hot
             ? "#FF0000"
             : "#0000FF"

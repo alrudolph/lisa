@@ -1,4 +1,4 @@
-import React, { Props, useContext } from "react";
+import React, { useContext } from "react";
 import ScatterPlot from "../scatterPlot";
 import { LisaContext } from "../../../contexts/lisaContext";
 

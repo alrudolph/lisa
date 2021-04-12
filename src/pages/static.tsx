@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Link } from "gatsby";
 
 import MapView from "../components/trivar/mapView";
-import ScatterView from "../components/trivar/scatterView";
+import ScatterView from "../components/scatter/scatterView";
 import Slider from "../components/trivar/slider";
 import Page from "../components/page";
 
@@ -26,7 +26,6 @@ const TextContainer = styled.div`
     margin: 10px 5px 0 5px;
   }
 `;
-
 const Divider = styled.hr`
   width: 98%;
   height: 1px;

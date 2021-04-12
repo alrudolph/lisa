@@ -8,7 +8,7 @@ import { LisaData } from "../contexts/lisaContext";
 import { DatesData } from "../contexts/datesContext";
 
 const Centered = styled.div`
-  width: 920px;
+  width: 930px;
   @media (max-width: 930px) {
     width: 100%;
   }

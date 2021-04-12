@@ -2,27 +2,36 @@ import React from "react";
 import styled from "styled-components";
 
 import statesMap from "us-atlas/states-10m.json";
-const DropDownContainer = styled.div`
+
+const Container = styled.div`
   width: 400px;
-  padding: 10px;
+  @media (max-width: 400px) {
+    width: 100%;
+  }
 `;
 
 const ButtonContainer = styled.div`
+  width: 100%;
   display: flex;
   justify-content: space-around;
   align-items: center;
+  margin: 10px 0;
 `;
-
-type Props = {
-  selectedState: [number, string];
-  stateSelector: ([a, b]: [number, string]) => void;
-};
 
 const Button = styled.button`
   border-radius: 10px;
   height: 30px;
   width: 60px;
 `;
+
+const Text = styled.p`
+  margin: 5px 10px;
+`;
+
+type Props = {
+  selectedState: [number, string];
+  stateSelector: ([a, b]: [number, string]) => void;
+};
 
 export default function DropDown({ stateSelector, selectedState }: Props) {
   const statevals = [
@@ -49,35 +58,40 @@ export default function DropDown({ stateSelector, selectedState }: Props) {
     return a.properties.name.localeCompare(b.properties.name);
   });
   return (
-    <DropDownContainer>
-      <p>Select a state from the drop down or by clicking on the map.</p>
-      <ButtonContainer>
-        <div>
-          {" "}
-          <label htmlFor="states">Choose a State:</label>
-          {""}
-          <select
-            id="states"
-            onChange={({
-              currentTarget: { value },
-              target: { selectedOptions },
-            }) => {
-              stateSelector([Number(value), selectedOptions[0].text]);
-            }}
-            value={selectedState[0]}
-          >
-            {statevals.map(({ id, properties: { name } }) => {
-              return (
-                <option value={Number(id)} key={id}>
-                  {name}
-                </option>
-              );
-            })}
-          </select>
-        </div>
-        <Button onClick={() => stateSelector([-1, ""])}>Reset</Button>
-      </ButtonContainer>
-      <p>Selecting a state will highlight that states' counties in the scatter plot below and show the cumulative trajectory over the year.</p>
-    </DropDownContainer>
+    <Container>
+        <Text>
+          Select a state from the drop down or by clicking on the map.
+        </Text>
+        <ButtonContainer>
+          <div>
+            {" "}
+            <label htmlFor="states">Choose a State:</label>
+            {""}
+            <select
+              id="states"
+              onChange={({
+                currentTarget: { value },
+                target: { selectedOptions },
+              }) => {
+                stateSelector([Number(value), selectedOptions[0].text]);
+              }}
+              value={selectedState[0]}
+            >
+              {statevals.map(({ id, properties: { name } }) => {
+                return (
+                  <option value={Number(id)} key={id}>
+                    {name}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+          <Button onClick={() => stateSelector([-1, ""])}>Reset</Button>
+        </ButtonContainer>
+        <Text>
+          Selecting a state will highlight that states' counties in the scatter
+          plot above and show the cumulative path for each county over the year.
+        </Text>
+    </Container>
   );
 }

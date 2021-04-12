@@ -13,6 +13,10 @@ const GlobalStyle = createGlobalStyle`
     font-weight: 400;
     font-size: 2.48832em;
   }
+  h2 {
+    font-weight: 300;
+    font-size: 2em;
+  }
 `
 
 export default GlobalStyle;

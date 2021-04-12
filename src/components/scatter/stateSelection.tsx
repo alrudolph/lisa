@@ -38,7 +38,7 @@ export default function StateSelection({
   stateSelector,
   addState,
 }: Props) {
-  const width = 380;
+  const width = 380 - 10;
   const height = 250;
   const translate: [number, number] = [width / 2, height / 2];
   const scale = 500;

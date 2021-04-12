@@ -13,7 +13,11 @@ const Container = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: space-around;
+
+  @media (max-width: 800px) {
+    justify-content: center;
+  }
 `;
 
 export default function ScatterView({
