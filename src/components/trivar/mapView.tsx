@@ -29,11 +29,19 @@ const Divider = styled.hr`
   margin: 5px 10px;
 `;
 
+const TextContainerArea = styled.div`
+  width: 100%;
+`
+
 const TextContainer = styled.div`
-  width: 98%;
+  margin: 0 15px;
   display: flex;
-  flex-wrap: wrap;
   justify-content: space-between;
+
+  @media (max-width: 500px) {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 `;
 
 const MapControls = styled.div`
@@ -80,9 +88,10 @@ const Title = styled.h3`
 
 const LegendContainer = styled.div`
   display: flex;
-  width: 100%;
-  justify-content: space-around;
+  width: 85%;
+  justify-content: space-between;
   @media (max-width: 770px) {
+    width: 100%;
     justify-content: center;
     flex-wrap: wrap;
   }
@@ -354,28 +363,32 @@ export default function MapView({
 
   return (
     <Container>
-      <TextContainer>
-        {selectedState[0] !== -1 ? (
-          <MapControls>
-            <Title>Selected State: {selectedState[1]}</Title>
-            <Text>Highlight over a county to read its specific values.</Text>
-          </MapControls>
-        ) : (
-          <Text>
-            Click a state on the map to zoom in and see county specific
-            information.
-          </Text>
-        )}
-        {selectedState[0] !== -1 ? (
-          <Button
-            onClick={() => {
-              stateSelector([-1, ""], true);
-            }}
-          >
-            Reset
-          </Button>
-        ) : null}
-      </TextContainer>
+      <TextContainerArea>
+        <TextContainer>
+          {selectedState[0] !== -1 ? (
+            <>
+              <MapControls>
+                <Title>Selected State: {selectedState[1]}</Title>
+                <Text>
+                  Highlight over a county to read its specific values.
+                </Text>
+              </MapControls>
+              <Button
+                onClick={() => {
+                  stateSelector([-1, ""], true);
+                }}
+              >
+                Reset
+              </Button>
+            </>
+          ) : (
+            <Text>
+              Click a state on the map to zoom in and see county specific
+              information.
+            </Text>
+          )}
+        </TextContainer>
+      </TextContainerArea>
       <Divider />
       <Maps>
         <MapContainer>

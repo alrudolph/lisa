@@ -8,9 +8,9 @@ import Slider from "./slider";
 import SliderWithEvents from "./sliderWithEvents";
 import MobileDisplay from "./mobileDisplay";
 
-const Container = styled.div`
+const Container = styled.div<{ width: string, height: number }>`
   width: ${({ width }: { width: string }) => width};
-  height: 200px;
+  height: ${({ height }: { height: number }) => height}px;
 `;
 
 type Props = {
@@ -44,7 +44,7 @@ const TimeLine = ({
   ];
 
   return (
-    <Container width={mobileMode ? "100%" : "760px"}>
+    <Container width={mobileMode ? "100%" : "760px"} height={mobileMode ? 115 : (showEvents ? 200 : 150)}>
       {mobileMode ? (
         <MobileDisplay week={week} showWeekNumber={showWeekNumber} />
       ) : showEvents ? (

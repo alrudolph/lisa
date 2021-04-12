@@ -19,7 +19,7 @@ const Title = styled.h3`
   margin: 0;
 `;
 
-const MapContainer = styled.svg`
+const MapContainer = styled.svg<{ county: number, border: boolean }>`
   g {
     background-color: light-gray;
     fill: red;

@@ -1,13 +1,9 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { Link } from "gatsby";
 
 import MapView from "../components/trivar/mapView";
-import ScatterView from "../components/scatter/scatterView";
-import Slider from "../components/trivar/slider";
 import Page from "../components/page";
-
-import Sparse from "../utility/sparse";
 
 const Container = styled.div`
   width: 100%;
@@ -23,7 +19,11 @@ const TextContainer = styled.div`
   width: 100%;
 
   & > h1 {
-    margin: 10px 5px 0 5px;
+    margin: 10px 15px 0 15px;
+  }
+
+  & > h2 {
+    margin: 5px 15px 0 15px;
   }
 `;
 const Divider = styled.hr`
@@ -34,7 +34,7 @@ const Divider = styled.hr`
   margin: 5px 10px;
 `;
 const Text = styled.p`
-  margin: 5px;
+  margin: 5px 15px;
 `;
 const Trivariate = () => {
   const width = 380;
@@ -93,8 +93,6 @@ const Trivariate = () => {
           setTime={setTime}
         />
         <Divider />
-        {/*<Slider time={time} setTime={setTime}/>*/}
-        {/*<p>State Selected: {selectedState[1]}</p>*/}
       </Container>
     </Page>
   );

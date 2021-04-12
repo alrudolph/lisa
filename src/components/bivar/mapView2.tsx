@@ -38,6 +38,8 @@ const ControlsContainer = styled.div`
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  margin: 0 15px;
+
   @media (max-width: 762px) {
     justify-content: center;
     width: 100%;
@@ -100,12 +102,12 @@ const TextContainer = styled.div`
   max-width: 500px;
 
   & > h1 {
-    margin: 5px 5px 0 5px;
+    margin: 5px 15px 0 15px;
   }
 `;
 
 const Text = styled.p`
-  margin: 5px;
+  margin: 5px 15px;
 `;
 
 const Divider = styled.hr`
@@ -259,7 +261,7 @@ export default function MapView({
                   onChange={() => setShowEvents(!showEvents)}
                   checked={showEvents}
                 ></input>
-                <label htmlFor="ShowEvents">Show Timeline Events</label>
+                <label htmlFor="ShowEvents">Timeline Events</label>
               </Row>
             </form>
           </CheckBox>

@@ -32,6 +32,7 @@ const MapContainer = styled.svg`
     fill: red;
   }
 
+  /* use can use an attribute selector but idk how to select on all maps */
   #c${({ county }: { county: number }) => county}.cboundary {
     stroke: black;
     stroke-width: 0.25px;
@@ -45,6 +46,12 @@ const MapContainer = styled.svg`
   .bubble {
     stroke-width: 0;
   }
+
+  /*
+  * > path:hover, circle:hover {
+    cursor: pointer;
+  }
+  */
 
   border: 1px solid
     ${({ border }: { border: boolean }) => (border ? "black" : "white")};

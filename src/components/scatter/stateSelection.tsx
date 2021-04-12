@@ -15,16 +15,16 @@ const Container = styled.div`
   margin: 10px;
 `;
 
-const Title = styled.h3`
-  margin: 0;
-`;
-
 const MapContainer = styled.svg`
   g {
     background-color: light-gray;
     fill: red;
   }
   border: 1px solid black;
+
+  * > path:hover {
+    cursor: pointer;
+  }
 `;
 
 type Props = {
@@ -81,9 +81,11 @@ export default function StateSelection({
           this.getAttribute("stateName"),
         ]);
       })
-      .style("fill",  function () {
-        return Number(this.getAttribute("stateFips")) === highlightedState[0] ? "rgb(0,54,96)" : "#ffffffff"
-      })
+      .style("fill", function () {
+        return Number(this.getAttribute("stateFips")) === highlightedState[0]
+          ? "rgb(0,54,96)"
+          : "#ffffffff";
+      });
   }, [highlightedState]);
 
   return (

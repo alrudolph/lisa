@@ -300,7 +300,7 @@ export default function Scatter() {
           </DescriptionContainer>
           <DescriptionContainer>
             <TextContainer>
-              <h2>Flat Regions</h2>
+              <h2>Paths With Flat Regions</h2>
             </TextContainer>
             <ExampleContainerReverse>
               <FlatRegionsExample />

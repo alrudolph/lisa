@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 
 import MapView1 from "../components/trivar/mapView1";
-import ScatterView from "../components/trivar/scatterView";
+import ScatterView from "../components/scatter/scatterView";
 import Slider from "../components/trivar/slider";
 import Page from "../components/page";
 

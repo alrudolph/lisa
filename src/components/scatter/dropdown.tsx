@@ -22,6 +22,10 @@ const Button = styled.button`
   border-radius: 10px;
   height: 30px;
   width: 60px;
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const Text = styled.p`

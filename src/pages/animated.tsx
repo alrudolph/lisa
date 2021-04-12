@@ -27,7 +27,7 @@ const TextContainer = styled.div`
   width: 100%;
 
   & > h1 {
-    margin: 10px 5px 0 5px;
+    margin: 10px 15px 0 15px;
   }
 `;
 
@@ -39,7 +39,7 @@ const Divider = styled.hr`
   margin: 5px 10px;
 `;
 const Text = styled.p`
-  margin: 5px;
+  margin: 5px 15px;
 `;
 
 const width = 380;
