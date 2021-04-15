@@ -62,12 +62,12 @@ const Trivariate = () => {
   const [time, setTime] = useState<[number, number]>([0, 52]);
 
   return (
-    <Page selectedPage="Static">
+    <Page selectedPage="Interactive">
       <Container>
         <TextContainer>
-          <h1>Static Choropleth Maps</h1>
+          <h1>Interative Choropleth Maps</h1>
           <Text>
-            This page provides a static representation of the{" "}
+            This page provides a single view representation of the{" "}
             <Link to="/animated">animated choropleth maps</Link> by using
             symbols to show the temporal aspects in a single view. Counties that
             were either a hot spot or cold spot at least once in 2020 have a

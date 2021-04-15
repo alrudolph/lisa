@@ -272,6 +272,8 @@ export default function MapView({
 
   const recentContainer = useRef(null);
 
+  const circleWidth = 40;
+
   useEffect(() => {
     d3.select(recentContainer.current).selectAll("*").remove();
 
@@ -283,7 +285,7 @@ export default function MapView({
       .style("height", maxHeight)
       // .style("background-color", "lightgray")
       .append("g")
-      .attr("transform", `translate(${leftMargin + margin[0]},0)`);
+      .attr("transform", `translate(${leftMargin + margin[0] + circleWidth},0)`);
 
     const weekValues = [1, 5, 10, 15, 20, 25, 30, 40, 46, 52];
 
@@ -298,7 +300,7 @@ export default function MapView({
     const xAxis = d3
       .scaleLinear()
       .domain([1, weekValues.length])
-      .range([0, maxWidth - 2 * margin[0] - leftMargin]);
+      .range([0, maxWidth - circleWidth - 2 * margin[0] - leftMargin]);
     const yAxis = d3
       .scaleLinear()
       .domain([0, 3])
@@ -344,14 +346,14 @@ export default function MapView({
       .attr("text-anchor", "end")
       .attr("x", -leftMargin / 2)
       .attr("y", maxHeight / 2 - 5)
-      .text("Hot");
+      .text("Hotspots");
 
     map_g
       .append("text")
       .attr("text-anchor", "end")
       .attr("x", -leftMargin / 2)
       .attr("y", maxHeight / 4)
-      .text("Cold");
+      .text("Coldspots");
   }, [time, zoomScale]);
 
   // useEffect(() => {

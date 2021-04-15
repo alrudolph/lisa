@@ -201,7 +201,7 @@ export default function Header({ selectedPage }: { selectedPage: string }) {
         <Nav>
           <NavItem text="About" to="" />
           <NavItem text="Animation" to="animated" />
-          <NavItem text="Static" to="static" />
+          <NavItem text="Interactive" to="interactive" />
           {/*<NavItem text="Static1" to="trivar1" />*/}
           <NavItem text="Scatter" to="scatter" />
         </Nav>

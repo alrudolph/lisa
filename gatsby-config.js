@@ -19,7 +19,6 @@ module.exports = {
         path: `${__dirname}/src/data/`
       },
     },
-    'gatsby-plugin-react-svg',
     'gatsby-transformer-csv'
   ],
   pathPrefix: "/lisa" // "/covid19-mobility-vis"

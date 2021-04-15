@@ -159,7 +159,7 @@ export default function Scatter() {
             <h1>Scatter Plots</h1>
             <Text>
               This page provides an alternative view to{" "}
-              <Link to="/static">the static choropleth plots page</Link>.
+              <Link to="/interactive">the interative choropleth plots page</Link>.
             </Text>
             <Text>
               Each week a county can be a hot spot, cold spot, or not a
@@ -258,7 +258,8 @@ export default function Scatter() {
                   the entire United States that have their 20th significant
                   value on the last week of the year. There are 7 of these
                   counties with 3 being hot spots and 4 being cold spots as
-                  indicated by the color of the paths. Since the majority of the
+                  indicated by the color of the paths (note that two of the hot
+                  spots overlap the entire time). Since the majority of the
                   counties are cold spots, the point color is a light blue. This
                   is the same point that is shown on the national level view on
                   the interactive scatter plots above.
@@ -307,19 +308,19 @@ export default function Scatter() {
               <TextContainer>
                 <Text>
                   The accompanying plot shows countes in <b>Pennsylvania</b> for
-                  Cuebiq's % sheleted. All of the lines shown are{" "}
-                  <Red>red</Red> which indicates that all of these counties were
-                  hot spots. This means that compared to counties in the nation,
-                  these counties had higher percantages of people sheltering in
-                  their home.
+                  Cuebiq's % sheleted. All of the lines shown are <Red>red</Red>{" "}
+                  which indicates that all of these counties were hot spots.
+                  This means that compared to counties in the nation, these
+                  counties had higher percantages of people sheltering in their
+                  home.
                 </Text>
                 <Text>
                   Similar to California, starting on week 12, the Governor
                   implemented social distancing measures and ordered schools to
                   close. This corresponds to counties becoming hot spots and
-                  staying as hot spots for multiple weeks, meaning that compared to
-                  counties in the nation, these counties had a higher percentage of people
-                  shelterd in their homes.
+                  staying as hot spots for multiple weeks, meaning that compared
+                  to counties in the nation, these counties had a higher
+                  percentage of people shelterd in their homes.
                 </Text>
                 <Text>
                   Then starting on week 19, many counties in the state's Red

@@ -148,7 +148,7 @@ const Row = styled.div`
 `;
 
 const Title = styled.h3`
-  margin: 0 0 0 5px;
+  margin: 3px 15px;
   white-space: nowrap;
 `;
 export default function MapView({

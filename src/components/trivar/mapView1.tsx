@@ -164,7 +164,7 @@ export default function MapView1({
   const margin = [20, 20];
 
   useEffect(() => {
-    const width = Math.min(maxWidth, 100 + zoomScale * 10) - 2 * margin[0];
+    const width = Math.min(maxWidth, 100 + zoomScale * 10) - 4 * margin[0];
     const height = Math.min(maxHeight, 40 + zoomScale * 2);
 
     const pointData = [
@@ -298,16 +298,16 @@ export default function MapView1({
     map_g
       .append("text")
       .attr("text-anchor", "end")
-      .attr("x", -leftMargin / 2)
+      .attr("x", -leftMargin)
       .attr("y", maxHeight / 2 - 5)
-      .text("Hot");
+      .text("Hotspots");
 
     map_g
       .append("text")
       .attr("text-anchor", "end")
-      .attr("x", -leftMargin / 2)
+      .attr("x", -leftMargin)
       .attr("y", maxHeight / 4)
-      .text("Cold");
+      .text("Coldspots");
   }, [time, zoomScale]);
 
   // useEffect(() => {
