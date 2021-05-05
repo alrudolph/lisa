@@ -26,16 +26,18 @@ type Props = {
   setWeek: (number) => void;
   playing: boolean;
   setPlaying: (b: boolean) => void;
+  max: number;
+  min: number
 };
 
-const Controls = ({ week, setWeek, playing, setPlaying }: Props) => {
+const Controls = ({ week, setWeek, playing, setPlaying, max, min=0 }: Props) => {
   return (
     <ButtonArea>
       {/* LEFT BUTTON */}
       <SkipPreviousCircle
         size="30px"
         onClick={() => {
-          if (week > 0) {
+          if (week > min) {
             setWeek(week - 1);
           }
           setPlaying(false);
@@ -43,11 +45,11 @@ const Controls = ({ week, setWeek, playing, setPlaying }: Props) => {
       />
 
       {/* MIDDLE BUTTON */}
-      {week === 51 ? (
+      {week === max ? (
         <Restart
           size="30px"
           onClick={() => {
-            setWeek(0);
+            setWeek(min);
             setPlaying(false);
           }}
         />
@@ -71,7 +73,7 @@ const Controls = ({ week, setWeek, playing, setPlaying }: Props) => {
       <SkipNextCircle
         size="30px"
         onClick={() => {
-          if (week < 51) {
+          if (week < max) {
             setWeek(week + 1);
           }
           setPlaying(false);

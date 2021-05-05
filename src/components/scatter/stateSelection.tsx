@@ -20,9 +20,8 @@ const MapContainer = styled.svg`
     background-color: light-gray;
     fill: red;
   }
-  border: 1px solid black;
 
-  * > path:hover {
+  &:hover {
     cursor: pointer;
   }
 `;
@@ -55,7 +54,7 @@ export default function StateSelection({
       .attr("height", height)
       .append("g");
 
-    addState(new MapZoom(map_path, map_g, width, height, highlightedState[0]));
+    // addState(new MapZoom(map_path, map_g, width, height, highlightedState[0]));
 
     // States:
     map_g
@@ -69,7 +68,7 @@ export default function StateSelection({
       .append("path")
       .attr("d", map_path as any)
       .attr("stateFips", ({ id }) => Number(id))
-      .attr("stateName", ({ properties: { name } }) => name);
+      .attr("stateName", ({ properties: { name } }) => name)
   }, []);
 
   useEffect(() => {

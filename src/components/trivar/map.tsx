@@ -26,14 +26,14 @@ const Title = styled.h3`
   margin: 0;
 `;
 
-const MapContainer = styled.svg`
+const MapContainer = styled.svg<{ county: number, border: boolean }>`
   g {
     background-color: light-gray;
     fill: red;
   }
 
   /* use can use an attribute selector but idk how to select on all maps */
-  #c${({ county }: { county: number }) => county}.cboundary {
+  #c${({ county }) => county}.cboundary {
     stroke: black;
     stroke-width: 0.25px;
   }
@@ -54,7 +54,7 @@ const MapContainer = styled.svg`
   */
 
   border: 1px solid
-    ${({ border }: { border: boolean }) => (border ? "black" : "white")};
+    ${({ border }) => (border ? "black" : "white")};
 `;
 
 const getStateFips = (fips: number): number => {
@@ -181,7 +181,8 @@ const Map = ({
   }, []);
 
   useEffect(() => {
-    d3.selectAll(".bubble")
+    d3.select(d3Container.current)
+      .selectAll(".bubble")
       .attr("r", getRadius)
       .style("fill", (sparse) => {
         const [hot, cold] = sparse.recent(...time);
@@ -190,20 +191,22 @@ const Map = ({
   }, [time]);
 
   useEffect(() => {
-    d3.selectAll(".cboundary").on("click", function (event, { id }) {
-      stateSelector([getStateFips(id), this.getAttribute("stateName")]);
-    });
+    d3.select(d3Container.current)
+      .selectAll(".cboundary")
+      .on("click", function (event, { id }) {
+        stateSelector([getStateFips(id), this.getAttribute("stateName")]);
+      });
 
-    d3.selectAll(".cboundary").on(
-      "mouseover",
-      function (event, { id, properties: { name } }) {
+    d3.select(d3Container.current)
+      .selectAll(".cboundary")
+      .on("mouseover", function (event, { id, properties: { name } }) {
         if (highlightedState[1] !== "") {
           countySelector([Number(id), name]);
         }
-      }
-    );
+      });
 
-    d3.selectAll(".bubble")
+    d3.select(d3Container.current)
+      .selectAll(".bubble")
       .on("mouseover", function (_, { fips }) {
         if (!highlightedState) {
           return;
@@ -223,6 +226,8 @@ const Map = ({
           : 0.2;
       });
   }, [highlightedState]);
+
+  
 
   return (
     <Container>

@@ -44,9 +44,9 @@ export default function TimeLineLegend({ week }: Props) {
       .domain([0, 2])
       .range([maxHeight - margin[1], 0]);
 
-    const pointData = [...Array(52 * 2).keys()].map((i) => {
+    const pointData = [...Array(52 * 4).keys()].map((i) => {
       return {
-        w: Math.floor(i / 2),
+        w: i / 4,
         c: i % 2,
       };
     });
@@ -74,11 +74,11 @@ export default function TimeLineLegend({ week }: Props) {
       .attr("class", "point")
       .attr("x", ({ w }) => xAxis(w))
       .attr("y", ({ c }) => yAxis(c) - 5)
-      .attr("width", 8)
+      .attr("width", 3)
       .attr("height", 15)
-      .attr("stroke", ({ c }) => (c === 1 ? "#fa5a50" : "#5768ac"))
-      .attr("stroke-opacity", ({ w }) => w / 52)
-      .attr("stroke-width", 0)
+      .attr("stroke", "none") //({ c }) => (c === 1 ? "#fa5a50" : "#5768ac"))
+      // .attr("stroke-opacity", ({ w }) => w / 52)
+      // .attr("stroke-width", 0)
       .attr("fill", ({ c }) => (c === 1 ? "#fa5a50" : "#5768ac"))
       .attr("fill-opacity", ({ w }) => w / 52);
 

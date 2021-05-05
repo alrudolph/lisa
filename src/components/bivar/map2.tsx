@@ -78,7 +78,7 @@ const Map = ({
   addState,
   stateSelector,
   selectedState,
-  children
+  children,
 }: Props) => {
   const { scale, translate, width, height } = MapSettings;
 
@@ -159,8 +159,10 @@ const Map = ({
       );
 
       const sel = d3.select(d3Container.current).select(`#c${d.fips}`);
-      sel.style("fill", col);
-      sel.style("fill-opacity", opac);
+
+      sel
+        .style("fill", col)
+        .style("fill-opacity", opac)
     });
   }, [weekNum, past, selectedState]);
 

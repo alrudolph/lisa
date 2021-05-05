@@ -12,6 +12,7 @@ const OutsideContainer = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
+  margin-top: 20px;
 `;
 
 const Container = styled.div`

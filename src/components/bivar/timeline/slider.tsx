@@ -19,19 +19,14 @@ type Props = {
 };
 
 const convertDate = (d: string): Date => {
-  return new Date(`${d} PST`);
+  const [year, month, day] = d.split('-')
+  return new Date(+year, month - 1, +day);
 };
-
 const nextDate = (initial: Date, n: number) => {
   return new Date(initial.getTime() + 24 * 60 * 60 * 1000 * n);
 };
 
-const Slider = ({
-  week,
-  setWeek,
-  setPlaying,
-  showWeekNumber
-}: Props) => {
+const Slider = ({ week, setWeek, setPlaying, showWeekNumber }: Props) => {
   const months = [
     "Jan",
     "Feb",
@@ -158,11 +153,6 @@ const Slider = ({
       .attr("stroke-linecap", "round")
       .attr("x1", x.range()[0])
       .attr("x2", x.range()[1])
-      .select(function () {
-        return this.parentNode.appendChild(this.cloneNode(true));
-      })
-      .attr("stroke-width", "100px") // want this to overlap the text
-      .attr("stroke", "transparent")
       .call(
         d3
           .drag()
@@ -171,7 +161,8 @@ const Slider = ({
             setPlaying(false);
             update(x.invert(event.x));
           })
-      );
+      )
+      .style("cursor", "pointer");
   }, []);
 
   useEffect(() => {

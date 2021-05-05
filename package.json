@@ -17,7 +17,9 @@
     "@types/styled-components": "^5.1.9",
     "@types/topojson": "^3.2.3",
     "babel-plugin-styled-components": "^1.12.0",
+    "beautiful-react-hooks": "^0.31.1",
     "d3": "^6.6.2",
+    "d3-queue": "^3.0.7",
     "gatsby": "^3.3.0",
     "gatsby-plugin-react-svg": "^3.0.1",
     "gatsby-plugin-styled-components": "^4.3.0",
@@ -32,6 +34,7 @@
     "us-atlas": "^3.0.0"
   },
   "devDependencies": {
+    "@types/d3-queue": "^3.0.8",
     "gh-pages": "^3.1.0",
     "json-loader": "^0.5.7"
   }

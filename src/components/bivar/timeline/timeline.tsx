@@ -3,12 +3,12 @@ import styled from "styled-components";
 
 import * as d3 from "d3";
 
-import Controls from "./controls";
+import Controls from "../../global/controls";
 import Slider from "./slider";
 import SliderWithEvents from "./sliderWithEvents";
 import MobileDisplay from "./mobileDisplay";
 
-const Container = styled.div<{ width: string, height: number }>`
+const Container = styled.div<{ width: string; height: number }>`
   width: ${({ width }: { width: string }) => width};
   height: ${({ height }: { height: number }) => height}px;
 `;
@@ -44,7 +44,10 @@ const TimeLine = ({
   ];
 
   return (
-    <Container width={mobileMode ? "100%" : "760px"} height={mobileMode ? 115 : (showEvents ? 200 : 150)}>
+    <Container
+      width={mobileMode ? "100%" : "760px"}
+      height={mobileMode ? 115 : showEvents ? 200 : 150}
+    >
       {mobileMode ? (
         <MobileDisplay week={week} showWeekNumber={showWeekNumber} />
       ) : showEvents ? (
@@ -65,6 +68,7 @@ const TimeLine = ({
         />
       )}
       <Controls
+        max={51}
         week={week}
         setWeek={setWeek}
         playing={playing}

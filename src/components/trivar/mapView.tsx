@@ -31,7 +31,7 @@ const Divider = styled.hr`
 
 const TextContainerArea = styled.div`
   width: 100%;
-`
+`;
 
 const TextContainer = styled.div`
   margin: 0 15px;
@@ -95,6 +95,8 @@ const LegendContainer = styled.div`
     justify-content: center;
     flex-wrap: wrap;
   }
+
+  font-size: 16pt;
 `;
 
 const Legend = styled.div`
@@ -259,16 +261,17 @@ export default function MapView({
       .attr("class", "point")
       .attr("cx", ({ x }) => xAxis(x))
       .attr("cy", () => yAxis(0.5))
-      .attr("r", ({ r }) => getRadius(r) * zoomScale)
+      .attr("r", ({ r }) => getRadius(r) * zoomScale * (selectedState[0] === -1 ? 4 : 1))
       .style("fill", "black");
 
     map_g
       .append("text")
       .attr("text-anchor", "end")
-      .attr("x", width / 2 + margin[0])
+      .attr("x", width / 2 + margin[0] + 10)
       .attr("y", height + (margin[1] * 3) / 2 + zoomScale / 4)
+      .style("font-size", "14pt")
       .text("Count");
-  }, [time, zoomScale]);
+  }, [time, zoomScale, selectedState]);
 
   const recentContainer = useRef(null);
 
@@ -285,7 +288,10 @@ export default function MapView({
       .style("height", maxHeight)
       // .style("background-color", "lightgray")
       .append("g")
-      .attr("transform", `translate(${leftMargin + margin[0] + circleWidth},0)`);
+      .attr(
+        "transform",
+        `translate(${leftMargin + margin[0] + circleWidth},0)`
+      );
 
     const weekValues = [1, 5, 10, 15, 20, 25, 30, 40, 46, 52];
 
@@ -337,8 +343,9 @@ export default function MapView({
     map_g
       .append("text")
       .attr("text-anchor", "end")
-      .attr("x", maxWidth / 2 + leftMargin)
+      .attr("x", maxWidth / 2 + leftMargin - circleWidth)
       .attr("y", (maxHeight * 19) / 20)
+      .style("font-size", "14pt")
       .text("Week Number");
 
     map_g
@@ -346,14 +353,16 @@ export default function MapView({
       .attr("text-anchor", "end")
       .attr("x", -leftMargin / 2)
       .attr("y", maxHeight / 2 - 5)
-      .text("Hotspots");
+      .text("Hotspots")
+      .style("font-size", "12pt");
 
     map_g
       .append("text")
       .attr("text-anchor", "end")
       .attr("x", -leftMargin / 2)
       .attr("y", maxHeight / 4)
-      .text("Coldspots");
+      .text("Coldspots")
+      .style("font-size", "12pt");
   }, [time, zoomScale]);
 
   // useEffect(() => {
@@ -399,6 +408,7 @@ export default function MapView({
               <Map
                 key={i}
                 MapSettings={MapSettings}
+                // title={"(" + ["a", "b", "c", "d"][i] + ") " + title}
                 title={title}
                 countiesMap={counties}
                 highlightedCounty={selectedCounty}

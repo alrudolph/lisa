@@ -14,7 +14,8 @@ const Text = styled.p`
   margin: 5px 0;
 `;
 const convertDate = (d: string): Date => {
-  return new Date(`${d} PST`);
+  const [year, month, day] = d.split('-')
+  return new Date(+year, +month - 1, +day);
 };
 
 const nextDate = (initial: Date, n: number) => {

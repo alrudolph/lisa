@@ -4,9 +4,12 @@ import { graphql, useStaticQuery } from "gatsby";
 
 import * as d3 from "d3";
 
-import { MapsContext } from "../../contexts/mapsContext";
+import { MapsContext } from "../../../contexts/mapsContext";
 
-const Container = styled.div``;
+const Container = styled.div`
+  width: 260px;
+  padding: 5px;
+`;
 
 const Map = styled.svg`
   width: 260px;
@@ -15,9 +18,10 @@ const Map = styled.svg`
 
 type Props = {
   showFDR: boolean;
+  setShowFDR: (b: boolean) => {};
 };
 
-const CenterMap = ({ showFDR }: Props) => {
+const CenterMap = ({ showFDR, setShowFDR }: Props) => {
   const {
     allUtahExampleCsv: { edges },
   } = useStaticQuery(graphql`
@@ -75,7 +79,7 @@ const CenterMap = ({ showFDR }: Props) => {
         const { node } = edges.find(
           ({ node: { fips } }) => Number(id) === Number(fips) // have to convert to numbers for decimal
         );
-        return node.class !== "0" ? 0.5 : 0
+        return node.class !== "0" ? 0.5 : 0;
       });
   }, []);
 
@@ -96,8 +100,21 @@ const CenterMap = ({ showFDR }: Props) => {
 
   return (
     <Container>
-      <Map ref={d3Container} />
-      <p>Utah FDR and Simulated cold spot</p>
+      <Map
+        ref={d3Container}
+        onMouseOver={() => {
+          setShowFDR(false);
+        }}
+        onMouseLeave={() => {
+          setShowFDR(true);
+        }}
+      />
+      <p>
+        Counties classified as cold spots in Cuebiq % Sheltered for Utah
+        4/13-4/19. The ligher shade of purple shows significance at alpha=0.05
+        for the simulated p-values. The darker shade of purple are the counties
+        that are significant using FDR.
+      </p>
     </Container>
   );
 };

@@ -1,17 +1,16 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useMediaQuery } from "beautiful-react-hooks";
 import styled from "styled-components";
 import { Link } from "gatsby";
 
 import Page from "../components/page";
-import MapView from "../components/bivar/mapView";
-import MapView1 from "../components/bivar/mapView1";
 import MapView2 from "../components/bivar/mapView2";
 import Table from "../components/bivar/table";
 
 import Sparse from "../utility/sparse";
 import MapZoom from "../utility/mapZoom";
 
-import CreateMap from "../components/bivar/createMap";
+// import CreateMap from "../components/bivar/createMap";
 
 const Container = styled.div`
   width: 100%;
@@ -71,37 +70,34 @@ const Bivariate = () => {
   // const [MapCreator, _] = useState(new CreateMap());
 
   const container = useRef(null);
-  const [width, setWidth] = useState(0);
-
-  useEffect(() => {
-    const width = container.current.getBoundingClientRect().width;
-    setWidth(width);
-  }, []);
+  const width = useMediaQuery("(max-width: 750px)");
 
   return (
     <Page selectedPage="Animation">
       <Container ref={container}>
         <TextContainer>
-          <h1>Animated Choropleth Maps</h1>
+          <h1>Animated Spatial Clustering</h1>
           <Text>
-            These maps show which counties were hot spots (colored red) and cold
-            spots (colored blue) during the specified week on the timeline
-            below.
+            This page has four animated choropleth maps that show the spatial
+            clustering in our variables for each week in 2020. Counties
+            classified as hotspots are colored red and counties classified as
+            coldspots are colored blue. For more information on how counties are
+            classified as hotspots or coldspots see the{" "}
+            <Link to="/">About Page</Link>.
+          </Text>
+          <Text>
+            The top row of plots includes data from Cuebiq while the bottom row
+            is from Safegraph. The column on the left shows the sources'
+            measures of mobility while the column on the right is of measures of
+            sheltering. If all of these variables are showing the same
+            phenomenon then we would expect the same patterns in the each column
+            and inverted colors across the rows. However, one of the points to
+            be made by comparing different variables and different sources is
+            that they don't show the exact same patterns which could lead to
+            different predictions in models using different data.
           </Text>
         </TextContainer>
         <Divider />
-        {/*<p>Week of {dates[week]}</p>*/}
-        {/*<MapView
-          MapSettings={MapSettings}
-          selectedCounty={selectedCounty}
-          setSelectedCounty={setSelectedCounty}
-          time={time}
-          setTime={setTime}
-          week={week}
-          setWeek={setWeek}
-          selectedState={selectedState}
-          setSelectedState={setSelectedState}
-        />*/}
         <MapView2
           MapSettings={MapSettings}
           selectedCounty={selectedCounty}
@@ -114,30 +110,49 @@ const Bivariate = () => {
           setSelectedState={setSelectedState}
           width={width}
         />
-        {/*<MapView1
-          MapSettings={MapSettings}
-          selectedCounty={selectedCounty}
-          setSelectedCounty={setSelectedCounty}
-          time={time}
-          setTime={setTime}
-          week={week}
-          setWeek={setWeek}
-          selectedState={selectedState}
-          setSelectedState={setSelectedState}
-          MapCreator={MapCreator}
-        />*/}
+        <Divider />
         {selectedState[0] !== -1 ? (
           <>
+            <TextContainer>
+              <Text>
+                The table below shows the individual values that were used in
+                the Local Moran test to calculate if a county was a hotspot or
+                coldspot in the current week. This table just shows the counties
+                in the selected state although the Local Moran test was run
+                using every county in the US.
+              </Text>
+            </TextContainer>
             <Table selectedState={selectedState} week={week} />
           </>
         ) : (
           <TextContainer>
             <Text>
-              Click on a state on one of the maps above in order to see
-              individual county values.
+              Click on a state above to see a table of the state's county
+              values.
             </Text>
           </TextContainer>
         )}
+        <TextContainer>
+          <Text>
+            One of the first things to notice is how sparse the classifications
+            are in Safegraph's mobility measure in the column on the left. If
+            you turn on the cumulative map option and play the animation to the
+            end, we can see all of the counties that were once classified in the
+            year. While the other three maps are mostly colored in, this map has
+            more counties that were never significant.
+          </Text>
+          <Text>
+            On the 13th week, 3/23-3/29, we can see an abrupt change in the
+            maps. These dates correspond to just after the declaration of a
+            national emergency which is listed on the timeline events. In all of
+            the weeks leading up to these dates, we see a large number of
+            counties classified as coldspots in Cuebiq mobility and hotspots in
+            the sheltered column, particularly in the west, which go away as the
+            pandemic begins. However, particularly in the South around
+            Mississippi and Alabama, we don't see this change as the
+            classification of these counties remain constant throughout the year.
+          </Text>
+        </TextContainer>
       </Container>
     </Page>
   );

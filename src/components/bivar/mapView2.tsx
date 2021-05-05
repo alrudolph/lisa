@@ -36,11 +36,10 @@ const ControlArea = styled.div`
 const ControlsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   align-items: center;
   margin: 0 15px;
 
-  @media (max-width: 762px) {
+  @media (max-width: 860px) {
     justify-content: center;
     width: 100%;
   }
@@ -86,7 +85,7 @@ type Props = {
   setWeek: (n: number) => void;
   selectedState: [number, string];
   setSelectedState: ([a, b]: [number, string]) => void;
-  width: number;
+  width: boolean;
 };
 
 const Container = styled.div`
@@ -99,7 +98,7 @@ const TextContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  max-width: 500px;
+  max-width: 650px;
 
   & > h1 {
     margin: 5px 15px 0 15px;
@@ -134,6 +133,7 @@ const Button = styled.button`
   border-radius: 10px;
   height: 30px;
   width: 60px;
+  cursor: pointer;
 `;
 
 const CheckBox = styled.div`
@@ -145,6 +145,10 @@ const CheckBox = styled.div`
 
 const Row = styled.div`
   margin: 0 3px;
+
+  input {
+    cursor: pointer;
+  }
 `;
 
 const Title = styled.h3`
@@ -223,12 +227,20 @@ export default function MapView({
       <ControlArea>
         <TextContainer>
           <Text>
-            Selecting the cumulative option also includes past values. This view
-            shows the the last time a county was a hot or cold spot by making
-            more distant times a lighter color.
+            The <i>cumulative map</i> option shows all of the counties that were once a
+            hotspot or coldspot up to the current date on the timeline. Hotspots
+            or coldspots on the current week are shaded a darker color while
+            past values become lighter as more weeks go by.
+          </Text>
+          <Text>
+            {" "}
+            The <i>show timeline events</i> option highlights a few national level
+            events that give context on the state of the pandemic. These events
+            are placed on top of the timeline and their text color is darkened
+            as you pass by them.
           </Text>
           {selectedState[0] === -1 ? (
-            <Text>Click on a state to zoom into that state.</Text>
+            <Text><b>Click on a state to zoom in.</b></Text>
           ) : (
             <Title>Selected State: {selectedState[1]}</Title>
           )}
@@ -254,15 +266,17 @@ export default function MapView({
                 ></input>
                 <label htmlFor="ShowWeek">Show Week Number</label>
               </Row>
-              <Row>
-                <input
-                  type="checkbox"
-                  id="ShowEvents"
-                  onChange={() => setShowEvents(!showEvents)}
-                  checked={showEvents}
-                ></input>
-                <label htmlFor="ShowEvents">Timeline Events</label>
-              </Row>
+              {!width ? (
+                <Row>
+                  <input
+                    type="checkbox"
+                    id="ShowEvents"
+                    onChange={() => setShowEvents(!showEvents)}
+                    checked={showEvents}
+                  ></input>
+                  <label htmlFor="ShowEvents">Timeline Events</label>
+                </Row>
+              ) : null}
             </form>
           </CheckBox>
           <Button
@@ -327,9 +341,8 @@ export default function MapView({
         setPlaying={setPlaying}
         showWeekNumber={showWeekNumber}
         showEvents={showEvents}
-        mobileMode={width <= 750}
+        mobileMode={width}
       />
-      <Divider />
     </Container>
   );
 }

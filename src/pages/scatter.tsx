@@ -129,24 +129,29 @@ export default function Scatter() {
 
   const [mapZoom, setMapZoom] = useState(Array<MapZoom>(1));
 
+
+  const [currId, setCurrId] = useState(-1)
+
   const addState = (m: MapZoom) => {
     mapZoom[0] = m;
     setMapZoom(mapZoom);
   };
-
   const stateSelector = (
     [id, name]: [number, string],
     reset: boolean = false
   ) => {
-    const m = mapZoom[0];
+    // const m = mapZoom[0];
 
-    if (!reset && id !== m.currId && id !== -1) {
-      m.select(id);
+    // if (!reset && id !== m.currId && id !== -1) {
+      if (!reset && id !== currId && id !== -1) {
+      // m.select(id);
       setSelectedState([id, name]);
+      setCurrId(id)
       return true;
     } else {
-      m.reset();
+      // m.reset();
       setSelectedState([-1, ""]);
+      setCurrId(-1)
       return false;
     }
   };
@@ -156,19 +161,17 @@ export default function Scatter() {
       <Container>
         <Descriptions>
           <TextContainer>
-            <h1>Scatter Plots</h1>
+            <h1>County Paths</h1>
             <Text>
-              This page provides an alternative view to{" "}
-              <Link to="/interactive">the interative choropleth plots page</Link>.
-            </Text>
-            <Text>
-              Each week a county can be a hot spot, cold spot, or not a
+              This page provides an alternative view to the
+              <Link to="/interactive">Interactive Maps</Link>  page.
+              Each week a county can be a hotspot, coldspot, or not a
               significant value. Over the year of 2020, the total number of
-              weeks a county was a hot spot or cold spot and the last week the
+              weeks a county was a hotspot or coldspot and the last week the
               county was a significant value were calculated and are shown in
               the scatter plots below. In these scatter plots, each point
               represents a county with <Blue>blue</Blue> points representing
-              cold spots and <Red>red</Red> points representing hot spots.
+              coldspots and <Red>red</Red> points representing hotspots.
             </Text>
           </TextContainer>
         </Descriptions>
@@ -190,7 +193,7 @@ export default function Scatter() {
         <Descriptions>
           <DescriptionContainer>
             <TextContainer>
-              <h2>County Paths</h2>
+              <h2>Paths</h2>
             </TextContainer>
             <ExampleContainer>
               <TextContainer>
@@ -199,27 +202,27 @@ export default function Scatter() {
                   that state's counties and show each counties' cumulative path.{" "}
                   <b>
                     These paths show, at each week, the total number of times a
-                    county was a hot spot or cold spot up to that week
+                    county was a hotspot or coldspot up to that week
                   </b>
-                  . <Red>Red</Red> lines indicate the county was a hot spot
+                  . <Red>Red</Red> lines indicate the county was a hot pot
                   while <Blue>blue</Blue> lines indicate that the county was a
-                  cold spot. These paths end in a point that shows the total
-                  number of times a county was a hot spot or cold spot, on the
-                  last week it was a hot or cold spot. This final value is shown
+                  coldspot. These paths end in a point that shows the total
+                  number of times a county was a hotspot or coldspot, on the
+                  last week it was a hotspot or coldspot. This final value is shown
                   in the national view of the scatter plots above and in the{" "}
-                  <Link to="/static">static choropleth maps</Link>.
+                  <Link to="/interactive">interactive maps</Link>.
                 </Text>
                 <Text>
                   The accompanying figure shows the path for Park County,
                   Wyoming (the county that contains the majority of Yellowstone
                   National Park). This path is colored blue, indicating that
-                  whenever it was a significant value, it was a cold spot. This
+                  whenever the county was a significant value, it was a cold spot. This
                   path can be broken into three types of regions:
                 </Text>
                 <PathList>
                   <PathSegment>
                     In these segments the line has a slope of 1. This means that
-                    for each week in the segment, the county was a cold spot.
+                    for each week in the segment, the county was a coldspot.
                   </PathSegment>
                   <PathSegment>
                     Between week 13 and 22, Park County was neither a hot spot
@@ -247,20 +250,20 @@ export default function Scatter() {
                   Each point on the scatter plot represents a county. However,
                   multiple counties can be located at the same end value. In
                   these cases, the point color is based off of the proportion of
-                  counties that were hot spots or cold spots. <Red>Red</Red>{" "}
-                  points signify a majority of hot spots while <Blue>blue</Blue>{" "}
-                  points signify a majority of cold spots. Darker values
-                  indicate a higher proportion of counties being hot spots or
-                  cold spots.
+                  counties that were hotspots or cold pots. <Red>Red</Red>{" "}
+                  points signify a majority of hotspots while <Blue>blue</Blue>{" "}
+                  points signify a majority of coldspots. Darker values
+                  indicate a higher proportion of counties being hotspots or
+                  coldspots.
                 </Text>
                 <Text>
                   In the accompanying figure, we can see all of the counties in
                   the entire United States that have their 20th significant
                   value on the last week of the year. There are 7 of these
-                  counties with 3 being hot spots and 4 being cold spots as
+                  counties with 3 being hotspots and 4 being coldspots as
                   indicated by the color of the paths (note that two of the hot
                   spots overlap the entire time). Since the majority of the
-                  counties are cold spots, the point color is a light blue. This
+                  counties are coldspots, the point color is a light blue. This
                   is the same point that is shown on the national level view on
                   the interactive scatter plots above.
                 </Text>
@@ -289,11 +292,7 @@ export default function Scatter() {
                   spots and remain being hot spots each week until the end of
                   2020, as shown by these lines having a slope of 1. We can see
                   that multiple counties follow this pattern by the lines being
-                  colored a brighter red. An interpretation of this pattern
-                  could be that statewide measures along with local restrictions
-                  and personal adherence to social distancing generally kept
-                  more people in their homes in these counties in California
-                  than people in counties from other states.
+                  colored a brighter red.
                 </Text>
               </TextContainer>
               <WeekStartExample />
@@ -307,11 +306,11 @@ export default function Scatter() {
               <FlatRegionsExample />
               <TextContainer>
                 <Text>
-                  The accompanying plot shows countes in <b>Pennsylvania</b> for
-                  Cuebiq's % sheleted. All of the lines shown are <Red>red</Red>{" "}
+                  The accompanying plot shows counties in <b>Pennsylvania</b> for
+                  Cuebiq's % sheltered. All of the lines shown are <Red>red</Red>{" "}
                   which indicates that all of these counties were hot spots.
                   This means that compared to counties in the nation, these
-                  counties had higher percantages of people sheltering in their
+                  counties had higher percentages of people sheltering in their
                   home.
                 </Text>
                 <Text>
@@ -320,11 +319,11 @@ export default function Scatter() {
                   close. This corresponds to counties becoming hot spots and
                   staying as hot spots for multiple weeks, meaning that compared
                   to counties in the nation, these counties had a higher
-                  percentage of people shelterd in their homes.
+                  percentage of people sheltered in their homes.
                 </Text>
                 <Text>
                   Then starting on week 19, many counties in the state's Red
-                  teir moved up to the Yellow teir, allowing certain business to
+                  tier moved up to the Yellow tier, allowing certain business to
                   reopen. This corresponds to flat regions of the counties' path
                   where, compared to counties in the nation, the counties no
                   longer have a high percentage of people sheltered in their
@@ -332,7 +331,7 @@ export default function Scatter() {
                 </Text>
                 <Text>
                   Towards the end of 2020, cases in Pennsylvania began to rise
-                  again. On November 23, the Health Secretary annouced a stay at
+                  again. On November 23, the Health Secretary announced a stay at
                   home advisory and in December the Governor tested positive for
                   COVID-19. This corresponds to certain counties becoming hot
                   spots again.

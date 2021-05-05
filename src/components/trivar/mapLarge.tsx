@@ -1,32 +1,41 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useContext } from "react";
 import styled from "styled-components";
 
 import * as d3 from "d3";
 import * as topojson from "topojson";
 
+import { MapsContext } from "../../contexts/mapsContext";
 import MapZoom from "../../utility/mapZoom";
 import Sparse from "../../utility/sparse";
 
 const Container = styled.div`
   display: flex;
+  flex-wrap: wrap;
   flex-direction: column;
   align-items: center;
+  margin: 10px 20px;
 
-  margin: 10px;
+  @media (max-width: 830px) {
+    margin: 10px 5px;
+  }
+  @media (max-width: 700px) {
+    margin: 0;
+  }
+
+  font-size: 16pt;
 `;
-
 const Title = styled.h3`
   margin: 0;
 `;
 
-const MapContainer = styled.svg<{ county: number, border: boolean }>`
+const MapContainer = styled.svg<{ county: number; border: boolean }>`
   g {
     background-color: light-gray;
     fill: red;
   }
-  border: 1px solid black;
 
-  #c${({ county }: { county: number }) => county}.cboundary {
+  /* use can use an attribute selector but idk how to select on all maps */
+  #c${({ county }) => county}.cboundary {
     stroke: black;
     stroke-width: 0.25px;
   }
@@ -39,7 +48,14 @@ const MapContainer = styled.svg<{ county: number, border: boolean }>`
   .bubble {
     stroke-width: 0;
   }
-  border: 1px solid ${({ border }: { border: boolean }) => (border ? "black" : "white")};
+
+  /*
+  * > path:hover, circle:hover {
+    cursor: pointer;
+  }
+  */
+
+  border: 1px solid ${({ border }) => (border ? "black" : "white")};
 `;
 
 const getStateFips = (fips: number): number => {
@@ -70,7 +86,7 @@ interface Props {
   getRadius: (g: Sparse) => number;
 }
 
-const Map1 = ({
+const MapLarge = ({
   title,
   MapSettings,
   countiesMap,
@@ -91,6 +107,8 @@ const Map1 = ({
   const projection = d3.geoAlbers().scale(scale).translate(translate);
   const map_path = d3.geoPath().projection(projection);
 
+  const { counties, states } = useContext(MapsContext);
+
   useEffect(() => {
     const map_g = d3
       .select(d3Container.current)
@@ -107,7 +125,7 @@ const Map1 = ({
       .style("stroke-width", "0.5px")
       .style("fill", "#ffffffff")
       .selectAll("path")
-      .data(topojson.feature(countiesMap, countiesMap.objects.states).features)
+      .data(states)
       .enter()
       .append("path")
       .attr("d", map_path as any)
@@ -117,9 +135,7 @@ const Map1 = ({
     map_g
       .append("g")
       .selectAll("path")
-      .data(
-        topojson.feature(countiesMap, countiesMap.objects.counties).features
-      )
+      .data(counties)
       .enter()
       .append("path")
       .attr("d", map_path as any)
@@ -169,8 +185,8 @@ const Map1 = ({
     d3.selectAll(".bubble")
       .attr("r", getRadius)
       .style("fill", (sparse) => {
-        const [hot, cold] = sparse.count(...time)
-        return hot > cold ? hotScale(1 / sparse.changes(...time)) : coldScale(1 / sparse.changes(...time))
+        const [hot, cold] = sparse.recent(...time);
+        return hot > cold ? hotScale(hot) : coldScale(cold);
       });
   }, [time]);
 
@@ -212,9 +228,13 @@ const Map1 = ({
   return (
     <Container>
       <Title>{title}</Title>
-      <MapContainer ref={d3Container} county={highlightedCounty[0]}  border={highlightedState[0] !== -1}/>
+      <MapContainer
+        ref={d3Container}
+        county={highlightedCounty[0]}
+        border={highlightedState[0] !== -1}
+      />
     </Container>
   );
 };
 
-export default Map1;
+export default MapLarge;

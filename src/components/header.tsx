@@ -133,11 +133,10 @@ const HoverOver = keyframes`
   }
 `;
 
-const LinkText = styled(Link)`
+const LinkText = styled(Link)<{ selected: boolean }>`
   font-size: 14pt;
 
-  color: ${({ selected }: { selected: boolean }) =>
-    selected ? "rgba(255, 255, 255, 0.7)" : "white"};
+  color: ${({ selected }) => (selected ? "#FFFFFFB3" : "white")};
   user-drag: none;
   text-decoration: none;
 
@@ -150,11 +149,10 @@ const LinkText = styled(Link)`
   }
 `;
 
-const Line = styled.div`
+const Line = styled.div<{ selected: boolean }>`
   border-bottom: 2px solid
-    ${({ selected }: { selected: boolean }) =>
-      selected ? "rgba(255, 255, 255, 0.7)" : "white"};
-  width: ${({ selected }: { selected: boolean }) => (selected ? "100%" : "0")};
+    ${({ selected }) => (selected ? "#FFFFFFB3" : "white")};
+  width: ${({ selected }) => (selected ? "100%" : "0")};
 `;
 
 const LinkContainer = styled.div`
@@ -175,12 +173,20 @@ console.log(
 );
 
 console.log(
-  "%cThis website was made by Alex Rudolph for the MOVE Lab at UCSB. See the source code at: https://github.com/alrudolph/lisa.",
-  "color: rgb(0, 54, 96); font-weight: thin; font-size: 15px; background-color: #D3D3D3; padding: 5px;"
+  "This website was made by Alex Rudolph for the MOVE Lab at UCSB. See the source code at:\nhttps://github.com/alrudolph/lisa."
 );
 
-export default function Header({ selectedPage }: { selectedPage: string }) {
-  const NavItem = ({ text, to }: { text: string; to: string }) => {
+interface Props {
+  selectedPage: string;
+}
+
+interface NavItem {
+  text: string;
+  to: string;
+}
+
+const Header = ({ selectedPage }: Props) => {
+  const NavItem = ({ text, to }: NavItem) => {
     return (
       <LinkContainer>
         <LinkText to={`/${to}`} selected={selectedPage === text}>
@@ -195,17 +201,17 @@ export default function Header({ selectedPage }: { selectedPage: string }) {
     <Container>
       <NavBar>
         <a href="https://move.geog.ucsb.edu/">
-          {/*<Logo />*/}
           <LogoPng alt="Move Logo" src={LogoImage} />
         </a>
         <Nav>
           <NavItem text="About" to="" />
           <NavItem text="Animation" to="animated" />
           <NavItem text="Interactive" to="interactive" />
-          {/*<NavItem text="Static1" to="trivar1" />*/}
           <NavItem text="Scatter" to="scatter" />
         </Nav>
       </NavBar>
     </Container>
   );
 }
+
+export default Header;

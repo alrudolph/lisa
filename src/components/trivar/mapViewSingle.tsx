@@ -3,18 +3,50 @@ import styled from "styled-components";
 
 import * as d3 from "d3";
 
+//import us from "us-atlas/nation-10m.json"
 import counties from "us-atlas/counties-10m.json";
+import states from "us-atlas/states-10m.json";
+//import data from "../data/counties.json";
 
 import MapZoom from "../../utility/mapZoom";
 import Sparse from "../../utility/sparse";
 import Card from "./cards";
-import Map1 from "./map1";
+import MapLarge from "./mapLarge";
 import { LisaContext } from "../../contexts/lisaContext";
 
+import { Maps } from "../../contexts/mapsContext";
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
+`;
+const Divider = styled.hr`
+  width: 98%;
+  height: 1px;
+  background-color: black;
+  border-radius: 1px;
+  margin: 5px 10px;
+`;
+
+const TextContainerArea = styled.div`
+  width: 100%;
+`;
+
+const TextContainer = styled.div`
+  margin: 0 15px;
+  display: flex;
+  justify-content: space-between;
+
+  @media (max-width: 500px) {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+`;
+
+const MapControls = styled.div`
+  display: flex;
+  flex-wrap: wrap;
 `;
 
 const MapContainer = styled.div`
@@ -30,10 +62,15 @@ const MapContainer = styled.div`
   }
 `;
 
+const Button = styled.button`
+  border-radius: 10px;
+  height: 30px;
+  width: 60px;
+`;
+
 const Row = styled.div`
   display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
+  justify-content: center;
 
   width: 100%;
   flex-wrap: wrap;
@@ -41,26 +78,31 @@ const Row = styled.div`
 
 const Text = styled.p`
   margin: 0;
-  width: 100px;
+  width: 100%;
+`;
+
+const Title = styled.h3`
+  margin: 0;
   white-space: nowrap;
 `;
 
-const Button = styled.button`
-  width: 50px;
-`;
-
 const LegendContainer = styled.div`
-  width: 800px;
   display: flex;
-  height: auto;
+  width: 85%;
+  justify-content: space-between;
+  @media (max-width: 770px) {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
 `;
 
 const Legend = styled.div`
-  margin: 10px;
-  width: 390px;
+  margin: 10px 0;
+  width: 380px;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-itms: center;
 `;
 
 const Cards = styled.div`
@@ -68,7 +110,6 @@ const Cards = styled.div`
   flex-direction: row;
   justify-content: space-evenly;
   flex-wrap: wrap;
-  width: 70%;
 `;
 
 type MapSettings = {
@@ -94,7 +135,7 @@ const getStateFips = (fips: number): number => {
   return Number(String(fips).slice(0, -3));
 };
 
-export default function MapView1({
+export default function MapViewSingle({
   MapSettings,
   selectedCounty,
   setSelectedCounty,
@@ -103,7 +144,7 @@ export default function MapView1({
   time,
   setTime,
 }: Props) {
-  const { mapData, mapTitles } = useContext(LisaContext)
+  const { mapData, mapTitles } = useContext(LisaContext);
 
   const [mapZoom, setMapZoom] = useState(Array<MapZoom>(mapTitles.length));
 
@@ -147,9 +188,9 @@ export default function MapView1({
   };
 
   const coldScale = d3
-    .scaleSequential(d3.interpolateBlues)
-    .domain([-0.5, 1]);
-  const hotScale = d3.scaleSequential(d3.interpolateReds).domain([-0.5, 1]);
+    .scaleSequentialPow(d3.interpolateBlues)
+    .domain([...time]);
+  const hotScale = d3.scaleSequentialPow(d3.interpolateReds).domain([...time]);
 
   const getRadius = (d: Sparse | number) => {
     const val = d instanceof Sparse ? d.count(...time) : [d];
@@ -160,11 +201,11 @@ export default function MapView1({
   const countContainer = useRef(null);
 
   const maxHeight = 100;
-  const maxWidth = 380;
+  const maxWidth = 370;
   const margin = [20, 20];
 
   useEffect(() => {
-    const width = Math.min(maxWidth, 100 + zoomScale * 10) - 4 * margin[0];
+    const width = Math.min(maxWidth, 100 + zoomScale * 10) - 2 * margin[0];
     const height = Math.min(maxHeight, 40 + zoomScale * 2);
 
     const pointData = [
@@ -184,7 +225,10 @@ export default function MapView1({
       .append("g")
       .attr("transform", `translate(${margin[0]},0)`);
 
-    const xAxis = d3.scaleLinear().domain([1, pointData[pointData.length - 1].x]).range([0, width]);
+    const xAxis = d3
+      .scaleLinear()
+      .domain([1, pointData[pointData.length - 1].x])
+      .range([0, width]);
     const yAxis = d3.scaleLinear().domain([0, 1]).range([height, 0]);
 
     map_g
@@ -220,13 +264,16 @@ export default function MapView1({
 
     map_g
       .append("text")
-      .attr("text-anchor", "end")
-      .attr("x", width / 2 + margin[0])
+      .attr("text-anchor", "middle")
+      .attr("x", width / 2 )
       .attr("y", height + (margin[1] * 3) / 2 + zoomScale / 4)
-      .text("Count");
+      .text("Count")
+      .style("font-size", "16pt")
   }, [time, zoomScale]);
 
   const recentContainer = useRef(null);
+
+  const circleWidth = 40;
 
   useEffect(() => {
     d3.select(recentContainer.current).selectAll("*").remove();
@@ -239,7 +286,10 @@ export default function MapView1({
       .style("height", maxHeight)
       // .style("background-color", "lightgray")
       .append("g")
-      .attr("transform", `translate(${leftMargin + margin[0]},0)`);
+      .attr(
+        "transform",
+        `translate(${leftMargin + margin[0] + circleWidth + 10},0)`
+      );
 
     const weekValues = [1, 5, 10, 15, 20, 25, 30, 40, 46, 52];
 
@@ -254,7 +304,7 @@ export default function MapView1({
     const xAxis = d3
       .scaleLinear()
       .domain([1, weekValues.length])
-      .range([0, maxWidth - 2 * margin[0] - leftMargin]);
+      .range([0, maxWidth - circleWidth - 2 * margin[0] - leftMargin]);
     const yAxis = d3
       .scaleLinear()
       .domain([0, 3])
@@ -290,24 +340,27 @@ export default function MapView1({
 
     map_g
       .append("text")
-      .attr("text-anchor", "end")
-      .attr("x", maxWidth / 2 + leftMargin)
-      .attr("y", (maxHeight * 19) / 20)
-      .text("Week Number");
+      .attr("text-anchor", "middle")
+      .attr("x", maxWidth / 2 - circleWidth)
+      .attr("y", (maxHeight * 19) / 20 + 2)
+      .text("Week Number")
+      .style("font-size", "16pt")
 
     map_g
       .append("text")
       .attr("text-anchor", "end")
-      .attr("x", -leftMargin)
+      .attr("x", -leftMargin / 2)
       .attr("y", maxHeight / 2 - 5)
-      .text("Hotspots");
+      .text("Hotspots")
+      .style("font-size", "14pt")
 
     map_g
       .append("text")
       .attr("text-anchor", "end")
-      .attr("x", -leftMargin)
+      .attr("x", -leftMargin / 2)
       .attr("y", maxHeight / 4)
-      .text("Coldspots");
+      .text("Coldspots")
+      .style("font-size", "14pt")
   }, [time, zoomScale]);
 
   // useEffect(() => {
@@ -319,32 +372,64 @@ export default function MapView1({
 
   return (
     <Container>
-      <Text>Selected State: {selectedState[1]}</Text>
-      <MapContainer>
-        {mapTitles.map((title, i) => {
-          return (
-            <Map1
-              key={i}
-              MapSettings={MapSettings}
-              title={title}
-              countiesMap={counties}
-              highlightedCounty={selectedCounty}
-              highlightedState={selectedState}
-              addState={(m: MapZoom) => addState(m, i)}
-              stateSelector={stateSelector}
-              countySelector={countySelector}
-              time={time}
-              data={mapData ? mapData[i] : null}
-              colorScales={[hotScale, coldScale]}
-              getRadius={getRadius}
-            />
-          );
-        })}
-      </MapContainer>
-      <Text>{selectedCounty[1] ? `Selected County: ${selectedCounty[1]} County` : ""}</Text>
+      <TextContainerArea>
+        <TextContainer>
+          {selectedState[0] !== -1 ? (
+            <>
+              <MapControls>
+                <Title>Selected State: {selectedState[1]}</Title>
+                <Text>
+                  Highlight over a county to read its specific values.
+                </Text>
+              </MapControls>
+              <Button
+                onClick={() => {
+                  stateSelector([-1, ""], true);
+                }}
+              >
+                Reset
+              </Button>
+            </>
+          ) : (
+            <Text>
+              Click a state on the map to zoom in and see county specific
+              information.
+            </Text>
+          )}
+        </TextContainer>
+      </TextContainerArea>
+      <Divider />
+      <Maps>
+        <MapContainer>
+          {mapTitles.map((title, i) => {
+            return i === 0 ? (
+              <MapLarge
+                key={i}
+                MapSettings={MapSettings}
+                title={title}
+                countiesMap={counties}
+                highlightedCounty={selectedCounty}
+                highlightedState={selectedState}
+                addState={(m: MapZoom) => addState(m, i)}
+                stateSelector={stateSelector}
+                countySelector={countySelector}
+                time={time}
+                data={mapData ? mapData[i] : null}
+                colorScales={[hotScale, coldScale]}
+                getRadius={getRadius}
+              />
+            ) : null;
+          })}
+        </MapContainer>
+      </Maps>
+      <Row>
+        {selectedCounty[1] ? (
+          <Title>Selected County: {selectedCounty[1]} County</Title>
+        ) : null}
+      </Row>
       <Cards>
         {selectedCounty[0] !== -1
-          ? [0, 1, 2, 3].map((i) => {
+          ? [0, 2, 1, 3].map((i) => {
               const county = mapData
                 ? mapData[i].filter(
                     (d) => Number(d.fips) === Number(selectedCounty[0])
@@ -369,15 +454,14 @@ export default function MapView1({
             })
           : null}
       </Cards>
-      <Row>
-        <Button
-          onClick={() => {
-            stateSelector([-1, ""], true);
-          }}
-        >
-          Reset
-        </Button>
-      </Row>
+      <LegendContainer>
+        <Legend>
+          <svg ref={recentContainer} />
+        </Legend>
+        <Legend>
+          <svg ref={countContainer} />
+        </Legend>
+      </LegendContainer>
     </Container>
   );
 }

@@ -19,9 +19,9 @@ type Props = {
 };
 
 const convertDate = (d: string): Date => {
-  return new Date(`${d} PST`);
+  const [year, month, day] = d.split('-')
+  return new Date(+year, month - 1, +day);
 };
-
 const nextDate = (initial: Date, n: number) => {
   return new Date(initial.getTime() + 24 * 60 * 60 * 1000 * n);
 };
